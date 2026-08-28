@@ -2,39 +2,113 @@ import { useEffect } from 'react';
 
 export function useCertScroller() {
   useEffect(() => {
-    const scroller = document.getElementById('cert-scroller');
-    if (!scroller) return;
-    
-    const handleScroll = () => {
-      const progress = window.scrollY / (scroller.offsetHeight - window.innerHeight);
-      const certIndex = Math.floor(progress * 5) % 5;
-      updateCerts(certIndex);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-}
+    const outer = document.getElementById('cert-scroller');
+    const list = document.getElementById('cert-list');
+    const items = list ? Array.from(list.children) : [];
+    const tiles = Array.from(document.querySelectorAll('#cert-media-track .cert-tile'));
 
-function updateCerts(index: number) {
-  const tiles = document.querySelectorAll('.cert-tile');
-  const listItems = document.querySelectorAll('#cert-list li');
-  
-  tiles.forEach((tile, i) => {
-    if (i === index) {
-      (tile as HTMLElement).style.opacity = '1';
-      (tile as HTMLElement).style.zIndex = '2';
-    } else {
-      (tile as HTMLElement).style.opacity = '0';
-      (tile as HTMLElement).style.zIndex = '1';
-    }
-  });
-  
-  listItems.forEach((item, i) => {
-    if (i === index) {
-      (item as HTMLElement).style.transform = 'scale(1)';
-    } else {
-      (item as HTMLElement).style.transform = 'scale(.96)';
-    }
-  });
+    if (!outer || !items.length || !tiles.length) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const ITEM_HEIGHT = 64;
+    let activeIndex = 0;
+
+    const setActive = (index: number) => {
+      if (index === activeIndex && list?.getAttribute('data-cert-init')) return;
+      activeIndex = index;
+      if (list) list.setAttribute('data-cert-init', '1');
+
+      if (list) list.style.transform = `translateY(-${index * ITEM_HEIGHT}px)`;
+
+      items.forEach((li, i) => {
+        const isActive = i === index;
+        const title = li.querySelector('.cert-list-title') as HTMLElement | null;
+        const meta = li.querySelector('.cert-list-meta') as HTMLElement | null;
+
+        if (title) {
+          title.style.color = isActive ? 'var(--ink-1)' : 'var(--text-muted)';
+          title.style.opacity = isActive ? '1' : '.45';
+        }
+        if (meta) meta.style.opacity = isActive ? '.85' : '.4';
+        (li as HTMLElement).style.transform = isActive ? 'scale(1)' : 'scale(.96)';
+      });
+
+      tiles.forEach((tile, i) => {
+        const isActive = i === index;
+        const el = tile as HTMLElement;
+        el.style.opacity = isActive ? '1' : '0';
+        el.style.transform = isActive ? 'scale(1)' : 'scale(.97)';
+        el.style.pointerEvents = isActive ? 'auto' : 'none';
+        el.style.zIndex = isActive ? '2' : '1';
+      });
+    };
+
+    const onScroll = () => {
+      const rect = outer.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const scrollable = rect.height - vh;
+
+      if (scrollable <= 0) {
+        setActive(0);
+        return;
+      }
+
+      let progress = -rect.top / scrollable;
+      progress = Math.max(0, Math.min(1, progress));
+      setActive(Math.round(progress * (items.length - 1)));
+    };
+
+    const onItemClick = (i: number) => {
+      const rect = outer.getBoundingClientRect();
+      const scrollable = outer.offsetHeight - window.innerHeight;
+
+      if (scrollable <= 0) return;
+
+      const targetProgress = i / (items.length - 1);
+      const absoluteTop = window.scrollY + rect.top;
+
+      window.scrollTo({
+        top: absoluteTop + targetProgress * scrollable,
+        behavior: 'smooth',
+      });
+    };
+
+    const cleanups: Array<() => void> = [];
+
+    items.forEach((li, i) => {
+      const handler = () => onItemClick(i);
+      (li as HTMLElement).addEventListener('click', handler);
+      cleanups.push(() => (li as HTMLElement).removeEventListener('click', handler));
+
+      (li as HTMLElement).setAttribute('tabindex', '0');
+      (li as HTMLElement).setAttribute('role', 'button');
+
+      const titleEl = li.querySelector('.cert-list-title');
+      (li as HTMLElement).setAttribute(
+        'aria-label',
+        `Jump to ${titleEl ? titleEl.textContent?.trim() || 'credential' : 'credential ' + (i + 1)}`
+      );
+
+      const onKeydown = (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onItemClick(i);
+        }
+      };
+
+      (li as HTMLElement).addEventListener('keydown', onKeydown);
+      cleanups.push(() => (li as HTMLElement).removeEventListener('keydown', onKeydown));
+    });
+
+    setActive(0);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      cleanups.forEach((fn) => fn());
+    };
+  }, []);
 }

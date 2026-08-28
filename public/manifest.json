@@ -1,0 +1,12 @@
+{
+  "name": "Swayam Agrawal · Finance & Analytics",
+  "short_name": "Swayam Agrawal",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F0DF",
+  "theme_color": "#F2B10B",
+  "icons": [
+    { "src": "favicon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "favicon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

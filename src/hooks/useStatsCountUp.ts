@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export function useStatsCountUp(containerRef: React.RefObject<HTMLDivElement>) {
+export function useStatsCountUp(containerRef: React.RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     if (!containerRef.current) return;
 

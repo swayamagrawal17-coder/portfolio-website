@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export function useNavScramble(containerRef: React.RefObject<HTMLElement>) {
+export function useNavScramble(containerRef: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     if (!containerRef.current) return;
     

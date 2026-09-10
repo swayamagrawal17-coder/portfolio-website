@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { scrollToY } from './useScrollTo';
 
 export function useCertScroller() {
   useEffect(() => {
@@ -8,6 +9,9 @@ export function useCertScroller() {
     const tiles = Array.from(document.querySelectorAll('#cert-media-track .cert-tile'));
 
     if (!outer || !items.length || !tiles.length) return;
+    // Only reduced motion opts out: there the CSS stacks every credential into a
+    // static, fully readable list. On phones the pinned scroll gallery runs the
+    // same as on desktop (single column, see globals.css).
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const ITEM_HEIGHT = 64;
@@ -26,8 +30,8 @@ export function useCertScroller() {
         const meta = li.querySelector('.cert-list-meta') as HTMLElement | null;
 
         if (title) {
-          title.style.color = isActive ? 'var(--ink-1)' : 'var(--text-muted)';
-          title.style.opacity = isActive ? '1' : '.45';
+          title.style.color = isActive ? 'var(--ink)' : 'var(--ink-soft)';
+          title.style.opacity = isActive ? '1' : '.55';
         }
         if (meta) meta.style.opacity = isActive ? '.85' : '.4';
         (li as HTMLElement).style.transform = isActive ? 'scale(1)' : 'scale(.96)';
@@ -41,6 +45,11 @@ export function useCertScroller() {
         el.style.pointerEvents = isActive ? 'auto' : 'none';
         el.style.zIndex = isActive ? '2' : '1';
       });
+
+      const num = document.getElementById('cert-progress-num');
+      if (num) num.textContent = String(index + 1).padStart(2, '0');
+      const bar = document.getElementById('cert-progress-bar');
+      if (bar) bar.style.width = `${((index + 1) / items.length) * 100}%`;
     };
 
     const onScroll = () => {
@@ -67,10 +76,7 @@ export function useCertScroller() {
       const targetProgress = i / (items.length - 1);
       const absoluteTop = window.scrollY + rect.top;
 
-      window.scrollTo({
-        top: absoluteTop + targetProgress * scrollable,
-        behavior: 'smooth',
-      });
+      scrollToY(absoluteTop + targetProgress * scrollable);
     };
 
     const cleanups: Array<() => void> = [];

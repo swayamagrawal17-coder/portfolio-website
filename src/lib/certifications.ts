@@ -16,7 +16,7 @@ export const certifications: Certification[] = [
     title: 'Google Project Management Certificate',
     provider: 'Coursera',
     providerMeta: 'Coursera · Google Career Certificates',
-    image: '/assets/cert-google-pm.png',
+    image: '/cert-google-pm.png',
     imageAlt: 'Google Project Management Certificate',
     description:
       'Covered how to run a project end to end: scoping and planning, budgeting, risk tracking, and keeping stakeholders aligned as the work moves. Structured around both Agile and traditional project management approaches.',
@@ -28,7 +28,7 @@ export const certifications: Certification[] = [
     title: 'Finance & Quantitative Modeling for Analysts',
     provider: 'Coursera',
     providerMeta: 'Coursera · University of Pennsylvania',
-    image: '/assets/cert-upenn.png',
+    image: '/cert-upenn.png',
     imageAlt: 'Finance & Quantitative Modeling for Analysts certificate',
     description:
       'A specialization on how financial decisions actually get modeled: time value of money, forecasting, and building the spreadsheet models analysts use to size a decision rather than just describe it.',
@@ -40,7 +40,7 @@ export const certifications: Certification[] = [
     title: 'Citi Investment Banking Job Simulation',
     provider: 'Job simulation',
     providerMeta: 'Job simulation · Citi via Forage',
-    image: '/assets/cert-citi.png',
+    image: '/cert-citi.png',
     imageAlt: 'Citi Investment Banking Job Simulation certificate',
     description:
       'A self-paced simulation of a real analyst task at Citi, working from source materials through to a client-ready recommendation.',
@@ -53,7 +53,7 @@ export const certifications: Certification[] = [
     title: 'Deloitte Data Analytics Job Simulation',
     provider: 'Job simulation',
     providerMeta: 'Job simulation · Deloitte via Forage',
-    image: '/assets/cert-deloitte.png',
+    image: '/cert-deloitte.png',
     imageAlt: 'Deloitte Data Analytics Job Simulation certificate',
     description:
       'A self-paced simulation of a real analyst task at Deloitte, working through data analysis and forensic technology exercises using real-world scenarios.',
@@ -66,7 +66,7 @@ export const certifications: Certification[] = [
     title: 'Google AI Essentials',
     provider: 'Coursera',
     providerMeta: 'Coursera · Google',
-    image: '/assets/cert-google-ai-essentials.png',
+    image: '/cert-google-ai-essentials.png',
     imageAlt: 'Google AI Essentials certificate',
     description:
       'A practical introduction to using generative AI tools responsibly at work: writing effective prompts, evaluating AI output critically, and knowing where automation helps versus where judgment still matters.',

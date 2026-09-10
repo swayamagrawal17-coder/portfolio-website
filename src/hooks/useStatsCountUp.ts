@@ -8,7 +8,19 @@ export function useStatsCountUp(containerRef: React.RefObject<HTMLDivElement | n
 
     if (!elements.length) return;
 
-    const intervals: NodeJS.Timeout[] = [];
+    const setFinal = (el: HTMLElement) => {
+      const target = parseFloat(el.getAttribute('data-count-to') || '0');
+      const decimals = parseInt(el.getAttribute('data-decimals') || '0');
+      el.textContent = target.toFixed(decimals);
+    };
+
+    // Reduced motion: show the final figures straight away, no ticking.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      elements.forEach(setFinal);
+      return;
+    }
+
+    const intervals: ReturnType<typeof setInterval>[] = [];
     let hasStarted = false;
 
     const startCountUp = () => {
@@ -53,5 +65,5 @@ export function useStatsCountUp(containerRef: React.RefObject<HTMLDivElement | n
       observer.disconnect();
       intervals.forEach((interval) => clearInterval(interval));
     };
-  }, []);
+  }, [containerRef]);
 }

@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://swayam-agrawal.vercel.app/sitemap.xml

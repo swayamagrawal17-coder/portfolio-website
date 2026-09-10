@@ -30,9 +30,43 @@ const base: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: '10px',
-  transition: 'transform var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out)',
+  transition:
+    'transform var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out)',
   textDecoration: 'none',
   lineHeight: 1,
+};
+
+// Resting / hover shadow (and glow) per variant. Ghost is a text link, no shadow.
+const shadows: Record<ButtonVariant, { rest: string; hover: string }> = {
+  primary: {
+    rest: '0 10px 26px -10px rgba(216, 31, 122, 0.55), 0 2px 6px -2px rgba(27, 42, 58, 0.25)',
+    hover: '0 18px 40px -12px rgba(216, 31, 122, 0.7), 0 4px 10px -3px rgba(27, 42, 58, 0.3)',
+  },
+  accent: {
+    rest: '0 10px 26px -10px rgba(216, 31, 122, 0.55), 0 2px 6px -2px rgba(27, 42, 58, 0.25)',
+    hover: '0 18px 40px -12px rgba(216, 31, 122, 0.7), 0 4px 10px -3px rgba(27, 42, 58, 0.3)',
+  },
+  navy: {
+    rest: '0 12px 30px -12px rgba(27, 42, 58, 0.55), 0 2px 6px -2px rgba(27, 42, 58, 0.3)',
+    hover: '0 20px 44px -14px rgba(27, 42, 58, 0.65), 0 5px 12px -3px rgba(27, 42, 58, 0.35)',
+  },
+  dark: {
+    rest: '0 12px 30px -12px rgba(27, 42, 58, 0.55), 0 2px 6px -2px rgba(27, 42, 58, 0.3)',
+    hover: '0 20px 44px -14px rgba(27, 42, 58, 0.65), 0 5px 12px -3px rgba(27, 42, 58, 0.35)',
+  },
+  outline: {
+    rest: '0 8px 22px -12px rgba(27, 42, 58, 0.4)',
+    hover: '0 14px 30px -12px rgba(27, 42, 58, 0.5)',
+  },
+  outlineNavy: {
+    rest: '0 8px 22px -12px rgba(27, 42, 58, 0.4)',
+    hover: '0 14px 30px -12px rgba(27, 42, 58, 0.5)',
+  },
+  outlineLight: {
+    rest: '0 10px 30px -12px rgba(0, 0, 0, 0.5)',
+    hover: '0 16px 40px -12px rgba(0, 0, 0, 0.6)',
+  },
+  ghost: { rest: 'none', hover: 'none' },
 };
 
 const sizes: Record<ButtonSize, React.CSSProperties> = {
@@ -111,23 +145,26 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const Tag = href ? 'a' : 'button';
+  const glow = shadows[variant];
   const s: React.CSSProperties = {
     ...base,
     ...sizes[size],
     ...variants[variant],
-    ...(variant === 'ghost' ? { padding: '0 0 6px' } : {}),
-    ...(disabled ? { opacity: 0.38, pointerEvents: 'none' } : {}),
+    ...(variant === 'ghost' ? { padding: '0 0 6px' } : { boxShadow: glow.rest }),
+    ...(disabled ? { opacity: 0.38, pointerEvents: 'none', boxShadow: 'none' } : {}),
     ...style,
   };
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
-    (e.currentTarget as any).style.transform = 'var(--hover-lift)';
-    onMouseEnter?.(e as any);
+    e.currentTarget.style.transform = 'var(--hover-lift)';
+    if (variant !== 'ghost' && !disabled) e.currentTarget.style.boxShadow = glow.hover;
+    onMouseEnter?.(e as React.MouseEvent<HTMLButtonElement>);
   };
 
   const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
-    (e.currentTarget as any).style.transform = 'none';
-    onMouseLeave?.(e as any);
+    e.currentTarget.style.transform = 'none';
+    if (variant !== 'ghost' && !disabled) e.currentTarget.style.boxShadow = glow.rest;
+    onMouseLeave?.(e as React.MouseEvent<HTMLButtonElement>);
   };
 
   const props = {

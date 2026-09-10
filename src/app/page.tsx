@@ -1,49 +1,64 @@
 'use client';
 
 import { useRef } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import { Eyebrow } from '@/components/ui/Eyebrow';
-import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ServiceItem } from '@/components/ui/ServiceItem';
-import { useScrollExpandHero } from '@/hooks/useScrollExpandHero';
-import { useParallax } from '@/hooks/useParallax';
+import { RandomLetterSwap } from '@/components/ui/RandomLetterSwap';
+import { EraChrome, type ChromeSection } from '@/components/chrome/EraChrome';
+import { useEraReveals } from '@/hooks/useEraReveals';
 import { useStatsCountUp } from '@/hooks/useStatsCountUp';
 import { useWorkCoverflow } from '@/hooks/useWorkCoverflow';
 import { useCertScroller } from '@/hooks/useCertScroller';
-import { useScrollScrub } from '@/hooks/useScrollScrub';
-import { useNavScramble } from '@/hooks/useNavScramble';
-import { scrollTo } from '@/hooks/useScrollTo';
+import { scrollTo, scrollToTop } from '@/hooks/useScrollTo';
 import { projects } from '@/lib/projects';
 import { certifications } from '@/lib/certifications';
 import { stats } from '@/lib/stats';
+import { experience } from '@/lib/experience';
+import { CONTACT_EMAIL, LINKEDIN_URL } from '@/lib/site';
+
+const CHROME_SECTIONS: ChromeSection[] = [
+  { id: 'hero', label: 'Intro', tone: 'light' },
+  { id: 'proof', label: 'By the numbers', tone: 'dark' },
+  { id: 'about', label: 'About', tone: 'light' },
+  { id: 'work', label: 'Selected work', tone: 'dark' },
+  { id: 'experience', label: 'Track record', tone: 'light' },
+  { id: 'certifications', label: 'Certifications', tone: 'dark' },
+  { id: 'toolkit', label: 'Toolkit', tone: 'dark' },
+  { id: 'contact', label: 'Contact', tone: 'light' },
+];
+
+const BAND_X = 'clamp(28px, 6vw, 96px)';
 
 export default function Home() {
-  const { boxRef, overlayRef, revealRef, word1Ref, word2Ref, eyebrowRef, hintRef } = useScrollExpandHero();
   const { containerRef: workContainer, stageRef: workStage } = useWorkCoverflow();
   useCertScroller();
-  useScrollScrub();
-  useParallax();
-  const navRef = useRef<HTMLElement>(null);
-  const footerRef = useRef<HTMLElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const experienceRef = useRef<HTMLDivElement>(null);
+  useEraReveals();
 
-  useNavScramble(navRef);
-  useNavScramble(footerRef);
+  const statsRef = useRef<HTMLDivElement>(null);
   useStatsCountUp(statsRef);
 
   return (
-    <div style={{ background: 'var(--paper-1)', fontFamily: 'var(--font-ui)', color: 'var(--ink-2)' }}>
+    <div style={{ background: 'var(--paper)', fontFamily: 'var(--font-ui)', color: 'var(--ink)' }}>
       <a
         href="#main-content"
+        onClick={(e) => {
+          e.preventDefault();
+          const m = document.getElementById('main-content');
+          if (m) {
+            m.focus();
+            m.scrollIntoView();
+          }
+        }}
         style={{
           position: 'absolute',
           left: '-9999px',
           top: 0,
           zIndex: 100,
           padding: '12px 20px',
-          background: 'var(--ink-1)',
-          color: 'var(--paper-1)',
+          background: 'var(--ink)',
+          color: 'var(--paper)',
           fontFamily: 'var(--font-ui)',
           fontSize: 'var(--size-small)',
           fontWeight: 700,
@@ -56,254 +71,361 @@ export default function Home() {
         Skip to content
       </a>
 
-      <header
-        ref={navRef}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '16px 32px',
-          padding: '22px 56px',
-          background: 'var(--surface-page)',
-        }}
-      >
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          aria-label="Swayam Agrawal"
-          style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}
-        >
-          <span
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '19px',
-              letterSpacing: '-.01em',
-              textTransform: 'uppercase',
-              color: 'var(--ink-1)',
-            }}
-          >
-            Swayam Agrawal
-          </span>
-        </a>
+      <EraChrome sections={CHROME_SECTIONS} />
 
-        <nav style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 24px' }} aria-label="Primary">
-          {['Work', 'About', 'Certifications', 'Toolkit', 'Contact'].map((label) => (
-            <a
-              key={label}
-              href={`#${label.toLowerCase()}`}
-              className="nav-scramble"
-              data-original={label}
-              onClick={(e) => {
-                e.preventDefault();
-                scrollTo(label.toLowerCase());
-              }}
-              style={{
-                fontFamily: 'var(--font-ui)',
-                fontSize: 'var(--size-meta)',
-                fontWeight: 600,
-                letterSpacing: '.12em',
-                textTransform: 'uppercase',
-                color: 'var(--ink-1)',
-                textDecoration: 'none',
-                paddingBottom: '4px',
-                borderBottom: '2px solid transparent',
-                cursor: 'pointer',
-              }}
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
-
-        <Button variant="primary" size="sm" href="mailto:swayamagrawal17@gmail.com">
-          Get in touch
-        </Button>
-      </header>
-
-      <main id="main-content">
-        {/* Hero Section */}
+      <main id="main-content" tabIndex={-1} style={{ outline: 'none' }}>
+        {/* ---------- Hero ---------- */}
         <section
-          data-screen-label="Hero"
+          id="hero"
+          data-era-hero
+          aria-labelledby="hero-heading"
           style={{
             position: 'relative',
-            overflow: 'hidden',
-            minHeight: 'calc(100vh - 84px)',
+            minHeight: '100vh',
             boxSizing: 'border-box',
-            background: 'var(--paper-1)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            padding: `120px ${BAND_X} 88px`,
+            background: 'var(--paper)',
+            overflow: 'hidden',
           }}
         >
           <div
-            id="seh-bg"
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'var(--ink-1) url(/assets/hero-bg.jpg) center center / cover no-repeat',
-            }}
-          />
+            data-era-hero-lockup
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '10px' }}
+          >
+            <h1
+              id="hero-heading"
+              className="era-display"
+              style={{ fontSize: 'clamp(58px, 15vw, 190px)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+            >
+              <span>Swayam</span>
+              <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                Agrawal
+                <span
+                  className="era-script"
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    right: 'clamp(-14px, -1.5vw, -6px)',
+                    bottom: 'clamp(-24px, -2.6vw, -12px)',
+                    fontSize: 'clamp(30px, 6vw, 76px)',
+                    color: 'var(--accent-on-light)',
+                  }}
+                >
+                  researcher
+                </span>
+              </span>
+            </h1>
+
+            <p
+              style={{
+                margin: '34px 0 0',
+                fontFamily: 'var(--font-ui)',
+                fontSize: '11px',
+                fontWeight: 600,
+                letterSpacing: '0.28em',
+                textTransform: 'uppercase',
+                color: 'var(--ink-soft)',
+              }}
+            >
+              Field research · Financial analysis · Go-to-market
+            </p>
+          </div>
 
           <div
             style={{
               position: 'relative',
-              width: '100%',
-              height: 'calc(100vh - 84px)',
+              marginTop: '56px',
               display: 'flex',
+              flexWrap: 'wrap',
               alignItems: 'center',
-              justifyContent: 'center',
+              gap: '14px',
+              justifyContent: 'flex-start',
+              maxWidth: 'var(--content-max)',
+              width: '100%',
+              marginInline: 'auto',
             }}
           >
-            <div
-              ref={boxRef}
-              id="seh-box"
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%,-50%)',
-                width: '300px',
-                height: '400px',
-                maxWidth: '95vw',
-                maxHeight: '85vh',
-                borderRadius: 'var(--radius-lg)',
-                overflow: 'hidden',
-                boxShadow: '0 24px 60px rgba(17,17,17,.35)',
-              }}
-            >
-              <img
-                src="/assets/hero-landscape.jpg"
-                alt="Illustrated portrait of Swayam Agrawal taking a mirror selfie against a creative collage background"
-                width={300}
-                height={400}
-                fetchPriority="high"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-              />
-              <div ref={overlayRef} id="seh-overlay" aria-hidden="true" style={{ position: 'absolute', inset: 0, background: 'var(--ink-1)', opacity: 0.72 }} />
-              <div style={{ position: 'absolute', left: '16px', right: '16px', bottom: '22px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textAlign: 'center' }}>
-                <span ref={eyebrowRef} id="seh-eyebrow" style={{ margin: 0, fontSize: 'var(--size-eyebrow)', letterSpacing: 'var(--ls-eyebrow)', textTransform: 'uppercase', fontWeight: 700, color: 'var(--marigold-soft)' }}>
-                  Finance & Analytics
-                </span>
-                <span ref={hintRef} id="seh-hint" style={{ margin: 0, fontSize: 'var(--size-small)', color: 'rgba(248,246,240,.75)' }}>
-                  Scroll to explore
-                </span>
-              </div>
-            </div>
-
-            <h1 style={{ margin: 0, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', pointerEvents: 'none', fontWeight: 400 }}>
-              <span
-                ref={word1Ref}
-                id="seh-word-1"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(34px,6vw,72px)',
-                  lineHeight: 1,
-                  backgroundImage: 'linear-gradient(90deg, var(--marigold), var(--vermilion), var(--marigold))',
-                  backgroundSize: '300% 100%',
-                  WebkitBackgroundClip: 'text',
-                  backgroundClip: 'text',
-                  color: 'transparent',
-                  WebkitTextFillColor: 'transparent',
-                  animation: 'gradientPan 10s linear infinite alternate',
-                }}
-              >
-                Swayam
-              </span>
-              <span
-                ref={word2Ref}
-                id="seh-word-2"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 'clamp(34px,6vw,72px)',
-                  lineHeight: 1,
-                  backgroundImage: 'linear-gradient(90deg, var(--marigold), var(--vermilion), var(--marigold))',
-                  backgroundSize: '300% 100%',
-                  WebkitBackgroundClip: 'text',
-                  backgroundClip: 'text',
-                  color: 'transparent',
-                  WebkitTextFillColor: 'transparent',
-                  animation: 'gradientPan 10s linear -1.5s infinite alternate',
-                }}
-              >
-                Agrawal
-              </span>
-            </h1>
-          </div>
-
-          <div ref={revealRef} id="seh-reveal" style={{ position: 'relative', width: '100%', maxWidth: '1240px', margin: '0 auto', padding: '0 56px 96px', opacity: 0, pointerEvents: 'none', transition: 'opacity 500ms ease', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <p style={{ margin: '0 0 22px', maxWidth: '56ch', fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--text-body)' }}>
-              Field research, financial analysis and go-to-market work, with the numbers attached.
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', alignItems: 'center' }}>
-              <Button variant="primary" size="lg" arrow onClick={() => scrollTo('work')}>
-                View my work
-              </Button>
-              <Button variant="outlineLight" size="lg" href="mailto:swayamagrawal17@gmail.com">
-                Email me
-              </Button>
-            </div>
+            <Button variant="dark" size="lg" arrow onClick={() => scrollTo('work')}>
+              View my work
+            </Button>
+            <Button variant="outline" size="lg" href={`mailto:${CONTACT_EMAIL}`}>
+              Email me
+            </Button>
           </div>
         </section>
 
-        {/* Proof Section */}
-        <section aria-labelledby="proof-heading" style={{ background: 'var(--surface-inverse)', color: 'var(--text-on-dark)', padding: '36px 0', overflow: 'hidden' }}>
-          <h2 id="proof-heading" style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>
+        {/* ---------- Proof / by the numbers ---------- */}
+        <section
+          id="proof"
+          data-era-proof
+          aria-labelledby="proof-heading"
+          style={{ position: 'relative', background: 'var(--ink)', color: 'var(--paper)' }}
+        >
+          <h2
+            id="proof-heading"
+            style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}
+          >
             Key numbers
           </h2>
-          <div ref={statsRef} style={{ width: '100%', overflow: 'hidden', WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)', maskImage: 'linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%)' }}>
-            <div id="stats-slider-track" style={{ display: 'flex', width: 'max-content', gap: '32px', animation: 'statsSlide 38s linear infinite' }}>
-              {[...stats, ...stats].map((stat, idx) => (
-                <div key={idx} style={{ flex: '0 0 auto', width: '160px' }}>
-                  <p style={{ margin: 0, fontFamily: 'var(--font-display)', fontSize: 'clamp(24px,2.4vw,32px)', lineHeight: 'var(--lh-display)', letterSpacing: 'var(--ls-display)', color: 'var(--marigold)' }}>
+          <div data-era-proof-runway style={{ position: 'relative', height: '220vh' }}>
+            <div
+              ref={statsRef}
+              data-era-proof-stage
+              style={{ position: 'sticky', top: 0, height: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden' }}
+            >
+              <div
+                data-era-proof-track
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  gap: 'clamp(48px, 7vw, 120px)',
+                  width: 'max-content',
+                  padding: `0 ${BAND_X}`,
+                }}
+              >
+                <span
+                  className="era-eyebrow"
+                  style={{ writingMode: 'vertical-rl', color: 'var(--paper-on-dark)', flexShrink: 0, alignSelf: 'center' }}
+                >
+                  By the numbers
+                </span>
+                {stats.map((stat, idx) => (
+                <div key={idx} style={{ flexShrink: 0 }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      whiteSpace: 'nowrap',
+                      fontFamily: 'var(--font-display)',
+                      fontWeight: 400,
+                      fontSize: 'clamp(52px, 8vw, 108px)',
+                      lineHeight: 0.95,
+                      letterSpacing: '-0.02em',
+                      color: 'var(--paper)',
+                    }}
+                  >
                     <span data-count-to={stat.value} data-decimals={stat.decimals}>
                       {stat.value.toFixed(stat.decimals)}
                     </span>
-                    <span style={{ fontSize: '0.42em', color: 'rgba(247,240,223,.6)' }}>{stat.suffix}</span>
+                    <span style={{ fontSize: '0.42em', color: 'var(--bougainvillea)' }}>{stat.suffix}</span>
                   </p>
-                  <p style={{ margin: '6px 0 0', fontSize: 'var(--size-eyebrow)', lineHeight: 1.4, color: 'rgba(247,240,223,.7)' }}>{stat.label}</p>
+                  <p
+                    style={{
+                      margin: '18px 0 0',
+                      maxWidth: '34ch',
+                      fontSize: 'var(--size-small)',
+                      lineHeight: 1.5,
+                      color: 'var(--paper-on-dark)',
+                    }}
+                  >
+                    {stat.label}
+                  </p>
                 </div>
               ))}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Work Section */}
-        <section id="work" aria-labelledby="work-heading" style={{ position: 'relative', background: 'var(--surface-inverse)', color: 'var(--text-on-dark)', padding: '96px 56px', overflow: 'hidden' }}>
-          <div style={{ position: 'relative', maxWidth: '1240px', margin: '0 auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '56px', alignItems: 'end', paddingBottom: '48px' }}>
-              <SectionHeading eyebrow="Selected work" title="Five projects, five results" tone="light" scribbleColor="var(--marigold)" headingId="work-heading" />
-              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap' }}>
-                <p style={{ margin: 0, maxWidth: '52ch', fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'rgba(247,240,223,.86)' }}>
+        {/* ---------- About ---------- */}
+        <section
+          id="about"
+          aria-labelledby="about-heading"
+          style={{ position: 'relative', padding: `clamp(90px, 12vw, 150px) ${BAND_X}`, background: 'var(--paper)' }}
+        >
+          <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
+            <span className="era-eyebrow">About</span>
+            <h2
+              id="about-heading"
+              data-era-scrub
+              className="era-display"
+              style={{ margin: '18px 0 0', fontSize: 'clamp(40px, 8vw, 116px)', maxWidth: '14ch' }}
+            >
+              The work behind the numbers
+            </h2>
+
+            <div
+              style={{
+                marginTop: 'clamp(48px, 7vw, 88px)',
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 1.7fr) minmax(190px, 0.58fr)',
+                gap: 'clamp(36px, 6vw, 72px)',
+                alignItems: 'end',
+              }}
+              className="responsive-grid-2col"
+            >
+              <div data-era-reveal style={{ alignSelf: 'start', display: 'flex', flexDirection: 'column', gap: '22px', maxWidth: '60ch' }}>
+                <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontSize: 'var(--size-h3)', lineHeight: 'var(--lh-h3)', color: 'var(--ink)' }}>
+                  Most of my work starts the same way: a claim someone believes, with no data behind it. I go and collect it.
+                </p>
+                <p style={{ margin: 0, fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--ink-soft)' }}>
+                  The UPI survey put me in nine of Pimpri-Chinchwad&apos;s markets with a questionnaire and 51 street vendors, working out what actually happens to one of them when a payment fails. The Ind AS 10 review was quieter: a company&apos;s PP&amp;E disclosures, read line by line until the gaps showed. And at the consulting firm I interned with, a client was paying far more for its leads than they were worth, so I traced the funnel until the reason was obvious.
+                </p>
+                <p style={{ margin: 0, fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--ink-soft)' }}>
+                  The analysis mostly happens in Excel. The UPI survey turned into a 33-page report that named seven barriers to financial inclusion. A prize-distribution process that used to tie up a 35-person team for days now runs off a tracker in about half the time. There is coordination work in the background too: placement drives for 100+ students across 30+ companies, and the logistics for a 130-person college fest, which nobody notices until something slips.
+                </p>
+                <p style={{ margin: 0, fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--ink-soft)' }}>
+                  I did my first year at Narsee Monjee in Mumbai, then moved back to Pune for the rest. I graduate in 2027 and I&apos;m looking for a management role in finance.
+                </p>
+                <p className="era-script" style={{ margin: '10px 0 0', fontSize: '44px', color: 'var(--bougainvillea)' }}>
+                  Swayam
+                </p>
+              </div>
+
+              <figure style={{ margin: 0, position: 'relative', alignSelf: 'end', marginTop: 'clamp(-140px, -8vw, -48px)' }}>
+                <Image
+                  src="/swayam-portrait.jpg"
+                  alt="Illustrated portrait of Swayam Agrawal"
+                  width={700}
+                  height={1244}
+                  sizes="(max-width: 900px) 100vw, 45vw"
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    height: 'auto',
+                    border: '1px solid var(--rule-ink-strong)',
+                    padding: '10px',
+                    background: 'var(--paper-deep)',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <figcaption
+                  style={{
+                    marginTop: '12px',
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    color: 'var(--ink-soft)',
+                  }}
+                >
+                  Pune · India
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Work: ERA arch reveal, then the coverflow ---------- */}
+        <section id="work" aria-labelledby="work-heading" style={{ position: 'relative', background: 'var(--paper)' }}>
+          {/* Arch reveal: a navy dome sweeps up from the foot of the screen and fills it.
+              A tall runway + a position:sticky stage does the "pinning" (no ScrollTrigger
+              pin), and GSAP only scrubs the dome/title transforms. */}
+          <div data-era-arch-reveal style={{ position: 'relative', height: '140vh', background: 'var(--paper)' }}>
+            <div
+              data-era-arch-stage
+              style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', background: 'var(--paper)' }}
+            >
+            {/* navy panel, revealed through a growing bottom-anchored ellipse so it
+                reads as a dome rising out of the cream. GSAP scrubs the clip-path. */}
+            <div
+              data-era-arch-panel
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'var(--ink)',
+                clipPath: 'ellipse(88% 15% at 50% 100%)',
+              }}
+            />
+
+            {/* heading + intro, sitting on the navy panel — fades in once the dome
+                has filled the frame */}
+            <div
+              data-era-arch-inner
+              style={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 2,
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+                textAlign: 'center',
+                padding: `0 ${BAND_X} clamp(56px, 9vh, 120px)`,
+                color: 'var(--paper)',
+              }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', maxWidth: 'var(--content-max)' }}>
+                <h2
+                  id="work-heading"
+                  className="era-display"
+                  style={{ margin: 0, fontSize: 'clamp(40px, 8vw, 120px)', maxWidth: '11ch', color: 'var(--paper)' }}
+                >
+                  Findings, not opinions
+                </h2>
+                <p style={{ margin: 0, maxWidth: '46ch', fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--paper-on-dark)' }}>
                   Field research, compliance, CRM and go-to-market. Each entry states what I did and what it produced.
                 </p>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexShrink: 0 }}>
-                  <span id="work-coverflow-counter-current" style={{ fontFamily: 'var(--font-display)', fontSize: '40px', lineHeight: 1, color: 'var(--marigold)' }}>
-                    01
-                  </span>
-                  <span style={{ fontSize: 'var(--size-small)', letterSpacing: '.04em', color: 'rgba(247,240,223,.5)' }}>/ 05</span>
-                </div>
               </div>
             </div>
 
-            <div ref={workContainer} id="work-coverflow" style={{ position: 'relative' }}>
+            <svg
+              data-era-arch-label
+              aria-hidden="true"
+              viewBox="0 0 1200 240"
+              preserveAspectRatio="xMidYMid meet"
+              style={{ position: 'absolute', left: '50%', top: '10%', width: 'min(1180px, 132vw)', transform: 'translateX(-50%)', pointerEvents: 'none', overflow: 'visible', zIndex: 3 }}
+            >
+              <defs>
+                <path id="work-arc" d="M 40,232 Q 600,26 1160,232" fill="none" />
+              </defs>
+              <text
+                style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', fill: 'var(--ink)' }}
+                fontSize="34"
+              >
+                <textPath href="#work-arc" startOffset="50%" textAnchor="middle">
+                  Selected work · Five projects
+                </textPath>
+              </text>
+            </svg>
+            </div>
+          </div>
+
+          {/* The coverflow, in normal flow on the same navy field */}
+          <div style={{ position: 'relative', background: 'var(--ink)', color: 'var(--paper)', padding: `clamp(16px, 3vw, 40px) ${BAND_X} clamp(90px, 12vw, 140px)` }}>
+            <div style={{ position: 'relative', maxWidth: 'var(--content-max)', margin: '0 auto' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap', paddingBottom: 'clamp(24px, 4vw, 40px)' }}>
+                <span className="era-eyebrow" style={{ color: 'var(--paper-on-dark)' }}>
+                  The work
+                </span>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', flexShrink: 0 }}>
+                  <span
+                    id="work-coverflow-counter-current"
+                    className="era-display"
+                    aria-hidden="true"
+                    style={{ fontSize: '46px', color: 'var(--accent-on-dark)' }}
+                  >
+                    01
+                  </span>
+                  <span aria-hidden="true" style={{ fontSize: 'var(--size-small)', letterSpacing: '.04em', color: 'var(--paper-on-dark)' }}>/ 05</span>
+                </div>
+              </div>
+
+            <div ref={workContainer} id="work-coverflow" data-era-work-stage style={{ position: 'relative' }}>
               <div ref={workStage} id="work-coverflow-stage" style={{ position: 'relative', height: '520px', display: 'flex', alignItems: 'center', justifyContent: 'center', perspective: '1400px' }}>
                 {projects.map((project) => (
                   <div
                     key={project.id}
                     className="coverflow-card"
+                    role="group"
+                    tabIndex={0}
+                    aria-roledescription="slide"
+                    aria-label={`Project: ${project.title}`}
                     style={{
                       position: 'absolute',
                       width: '280px',
                       height: '400px',
                       borderRadius: 'var(--radius-card)',
                       overflow: 'hidden',
-                      background: 'var(--ink-1)',
+                      background: 'var(--ink)',
                       border: '1px solid var(--border-hairline-inverse)',
                       transformOrigin: 'center center',
                       boxShadow: '0 20px 45px rgba(0,0,0,.55)',
-                      transition: 'transform 700ms cubic-bezier(.25,1,.5,1),opacity 700ms cubic-bezier(.25,1,.5,1),filter 700ms cubic-bezier(.25,1,.5,1),width 500ms cubic-bezier(.25,1,.5,1),height 500ms cubic-bezier(.25,1,.5,1)',
+                      transition: 'transform 600ms cubic-bezier(.25,1,.5,1), opacity 600ms cubic-bezier(.25,1,.5,1), filter 600ms ease-out, width 500ms cubic-bezier(.25,1,.5,1), height 500ms cubic-bezier(.25,1,.5,1), box-shadow 400ms ease-out',
+                      cursor: 'pointer',
                     }}
                   >
                     <div
@@ -322,14 +444,14 @@ export default function Home() {
                         overflowY: 'auto',
                       }}
                     >
-                      <span style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 700, lineHeight: 1.15, color: 'var(--marigold)' }}>
+                      <span style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 700, lineHeight: 1.15, color: 'var(--accent-on-dark)' }}>
                         {project.category}
                       </span>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '19px', lineHeight: 1.25, color: 'var(--paper-1)' }}>
+                        <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '19px', lineHeight: 1.25, color: 'var(--paper)' }}>
                           {project.title}
                         </p>
-                        <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.5, color: 'rgba(247,240,223,.78)' }}>
+                        <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.5, color: 'var(--paper-on-dark)' }}>
                           {project.shortDescription}
                         </p>
                         <button
@@ -342,10 +464,10 @@ export default function Home() {
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '6px',
-                            padding: '8px 16px',
+                            padding: '9px 16px',
                             borderRadius: 'var(--radius-pill)',
-                            background: 'var(--marigold)',
-                            color: 'var(--ink-1)',
+                            background: 'var(--accent-on-dark)',
+                            color: 'var(--ink)',
                             fontSize: '10.5px',
                             fontWeight: 700,
                             letterSpacing: '.08em',
@@ -353,15 +475,16 @@ export default function Home() {
                             border: 'none',
                             cursor: 'pointer',
                             fontFamily: 'inherit',
+                            boxShadow: '0 10px 24px -10px rgba(216, 31, 122, 0.65)',
                           }}
                         >
                           {project.readMoreCtaText}
                         </button>
                         <div className="coverflow-expanded" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                          <span style={{ fontSize: '10px', letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(247,240,223,.78)' }}>
+                          <span style={{ fontSize: '10px', letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--paper-on-dark)' }}>
                             {project.expandedDate}
                           </span>
-                          <p style={{ margin: 0, fontSize: '12px', lineHeight: 1.55, color: 'rgba(247,240,223,.86)' }}>
+                          <p style={{ margin: 0, fontSize: '12px', lineHeight: 1.55, color: 'var(--paper-on-dark)' }}>
                             {project.fullDescription}
                           </p>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
@@ -376,7 +499,7 @@ export default function Home() {
                                   padding: '6px 11px',
                                   borderRadius: 'var(--radius-pill)',
                                   border: '1px solid var(--border-hairline-inverse)',
-                                  color: 'var(--paper-1)',
+                                  color: 'var(--paper)',
                                 }}
                               >
                                 {tag}
@@ -385,26 +508,36 @@ export default function Home() {
                           </div>
                           <div
                             style={{
-                              background: project.outcomeBg === 'marigold' ? 'var(--marigold)' : 'var(--paper-1)',
-                              color: project.outcomeBg === 'marigold' ? 'var(--ink-1)' : 'var(--ink-1)',
+                              background: 'var(--card)',
+                              color: 'var(--ink)',
                               padding: '18px',
                               display: 'flex',
                               flexDirection: 'column',
                               gap: '8px',
                             }}
                           >
-                            <span style={{ fontSize: '9.5px', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: project.outcomeBg === 'marigold' ? 'var(--ink-1)' : 'var(--vermilion-deep)' }}>
+                            <span style={{ fontSize: '9.5px', fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--accent-on-light)' }}>
                               Outcome
                             </span>
                             <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontSize: 'var(--size-body)', lineHeight: 1.3 }}>
                               {project.outcome.highlight}
                             </p>
                             {project.outcome.details && (
-                              <p style={{ margin: 0, fontSize: 'var(--size-eyebrow)', lineHeight: 1.5, color: project.outcomeBg === 'marigold' ? 'var(--ink-3)' : 'var(--text-muted)' }}>
+                              <p style={{ margin: 0, fontSize: 'var(--size-eyebrow)', lineHeight: 1.5, color: 'var(--ink-soft)' }}>
                                 {project.outcome.details}
                               </p>
                             )}
                           </div>
+                          {project.reportUrl && (
+                            <a
+                              href={project.reportUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ alignSelf: 'flex-start', fontSize: '10.5px', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--accent-on-dark)', textDecoration: 'none', borderBottom: '1px solid currentColor', paddingBottom: '2px' }}
+                            >
+                              View full report →
+                            </a>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -412,110 +545,164 @@ export default function Home() {
                 ))}
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', marginTop: '24px' }}>
-                <button id="coverflow-prev" aria-label="Previous project" style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline-inverse)', background: 'transparent', color: 'var(--paper-1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
-                  ‹
+              <div role="group" aria-label="Project carousel controls" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '18px', marginTop: '24px', flexWrap: 'wrap' }}>
+                <button type="button" id="coverflow-prev" aria-label="Previous project" style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline-inverse)', background: 'transparent', color: 'var(--paper)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', boxShadow: '0 10px 26px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(242, 239, 230, 0.08)' }}>
+                  &lt;
                 </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {projects.map((_, i) => (
-                    <button key={i} className="coverflow-dot" aria-label={`Go to project ${i + 1}`} style={{ height: '28px', width: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}>
-                      <span style={{ display: 'block', flexShrink: 0, height: '8px', width: '8px', borderRadius: 'var(--radius-pill)', background: 'rgba(247,240,223,.3)', transition: 'all 300ms ease' }} />
+                <div role="tablist" aria-label="Choose a project" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  {projects.map((project, i) => (
+                    <button key={i} type="button" className="coverflow-dot" role="tab" aria-label={`Project ${i + 1}: ${project.title}`} aria-selected={i === 0} style={{ height: '32px', width: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}>
+                      <span style={{ display: 'block', flexShrink: 0, height: '8px', width: '8px', borderRadius: 'var(--radius-pill)', background: 'var(--rule-on-dark)', transition: 'all 300ms cubic-bezier(.25,1,.5,1)' }} />
                     </button>
                   ))}
                 </div>
-                <button id="coverflow-next" aria-label="Next project" style={{ width: '40px', height: '40px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline-inverse)', background: 'transparent', color: 'var(--paper-1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
-                  ›
+                <button type="button" id="coverflow-next" aria-label="Next project" style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline-inverse)', background: 'transparent', color: 'var(--paper)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', boxShadow: '0 10px 26px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(242, 239, 230, 0.08)' }}>
+                  &gt;
+                </button>
+                <button
+                  type="button"
+                  id="coverflow-toggle"
+                  aria-label="Pause automatic project rotation"
+                  aria-pressed="false"
+                  style={{
+                    height: '44px',
+                    padding: '0 16px',
+                    borderRadius: 'var(--radius-pill)',
+                    border: '1px solid var(--border-hairline-inverse)',
+                    background: 'transparent',
+                    color: 'var(--paper-on-dark)',
+                    cursor: 'pointer',
+                    fontSize: '10.5px',
+                    fontWeight: 700,
+                    letterSpacing: '.08em',
+                    textTransform: 'uppercase',
+                    fontFamily: 'inherit',
+                    boxShadow: '0 10px 26px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(242, 239, 230, 0.08)',
+                  }}
+                >
+                  Pause
                 </button>
               </div>
 
-              <p style={{ margin: '24px 0 0', textAlign: 'center', fontSize: 'var(--size-small)', color: 'rgba(247,240,223,.7)' }}>
+              <p style={{ margin: '24px 0 0', textAlign: 'center', fontSize: 'var(--size-small)', color: 'var(--paper-on-dark)' }}>
                 Full reports available on request, just{' '}
-                <a href="mailto:swayamagrawal17@gmail.com" style={{ color: 'var(--marigold)' }}>
+                <a href={`mailto:${CONTACT_EMAIL}`} style={{ fontWeight: 700, color: 'var(--accent-on-dark)' }}>
                   ask for a copy
                 </a>
                 .
               </p>
             </div>
+            </div>
           </div>
         </section>
 
-        {/* Experience Section */}
-        <section aria-labelledby="experience-heading" style={{ position: 'relative', padding: '96px 56px', overflow: 'hidden' }}>
-          <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-            <div style={{ paddingBottom: '40px' }}>
-              <SectionHeading eyebrow="Track record" title="Experience & education" headingId="experience-heading" />
-            </div>
-            <div ref={experienceRef} data-reveal="16" style={{ animation: 'revealIn 640ms var(--ease-out) both', animationTimeline: 'view', animationRange: 'entry 6% cover 28%' }}>
-              {[
-                {
-                  period: 'Jul–Oct 2026',
-                  title: 'HR & Market Research Intern',
-                  org: 'BIIOS Startup Consulting LLP',
-                  desc: 'Screened 100+ resumes and ran end-to-end HR operations while delivering market research, GTM and digital audit work for four clients.',
-                },
-                {
-                  period: '2025–26',
-                  title: 'Placement Coordinator',
-                  org: 'Indira College of Commerce and Science',
-                  desc: 'Coordinated drives for 100+ students with 30+ companies, owning scheduling, communication and applicant records.',
-                },
-                {
-                  period: '2026',
-                  title: 'Core Team: YUVAAN',
-                  org: 'Indira College of Commerce and Science',
-                  desc: 'Tracked 16 events with 8 faculty reps over two weeks with zero scheduling conflicts; built an Excel tracker for 35+ members that halved prize distribution time.',
-                },
-                {
-                  period: '2027',
-                  title: 'B.Com',
-                  org: 'Indira College of Commerce and Science, Pune University',
-                  desc: 'SGPA 9.27. First year at Narsee Monjee College of Commerce and Economics, Mumbai University.',
-                },
-                {
-                  period: '2025',
-                  title: 'CMA Foundation',
-                  org: 'Institute of Cost Accountants of India',
-                  desc: 'Cleared with 276/400 and exemptions in all four papers. Class XII: 88.6%, with the school\'s highest Economics mark at 94%.',
-                },
-              ].map((item, idx) => (
-                <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr 2fr', gap: '16px 44px', padding: '26px 0', borderTop: '1px solid var(--border-hairline)', borderBottom: idx === 4 ? '1px solid var(--border-hairline)' : 'none' }}>
-                  <span data-scrub-number="e" style={{ display: 'inline-block', transformOrigin: 'left center', fontSize: 'var(--size-meta)', letterSpacing: 'var(--ls-meta)', textTransform: 'uppercase', color: 'var(--vermilion-deep)' }}>
-                    {item.period}
-                  </span>
-                  <div>
-                    <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontSize: 'var(--size-h4)', fontWeight: 700, color: 'var(--ink-1)' }}>
+        {/* ---------- Experience & education (wavy timeline) ---------- */}
+        <section
+          id="experience"
+          aria-labelledby="experience-heading"
+          style={{ position: 'relative', padding: `clamp(90px, 12vw, 150px) ${BAND_X}`, background: 'var(--paper-deep)', overflow: 'hidden' }}
+        >
+          <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
+            <span className="era-eyebrow">Track record</span>
+            <h2
+              id="experience-heading"
+              data-era-scrub
+              className="era-display"
+              style={{ margin: '18px 0 0', fontSize: 'clamp(40px, 8vw, 116px)', maxWidth: '14ch' }}
+            >
+              Experience &amp; education
+            </h2>
+
+            <div className="era-timeline" style={{ marginTop: 'clamp(56px, 8vw, 96px)' }}>
+              <svg
+                className="era-timeline-line"
+                viewBox="0 0 1200 120"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path
+                  className="era-wave-path"
+                  d="M0,60 C 40,20 80,20 120,60 C 200,100 280,100 360,60 C 440,20 520,20 600,60 C 680,100 760,100 840,60 C 920,20 1000,20 1080,60 C 1120,90 1160,90 1200,60"
+                  fill="none"
+                  stroke="var(--bougainvillea)"
+                  strokeWidth="2.5"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+
+              {experience.map((item, idx) => (
+                <div key={idx} className={`era-timeline-item ${idx % 2 === 0 ? 'is-above' : 'is-below'}`}>
+                  <span data-era-node className="era-timeline-dot" aria-hidden="true" />
+                  <div className="era-timeline-card">
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        fontSize: 'var(--size-meta)',
+                        letterSpacing: 'var(--ls-meta)',
+                        textTransform: 'uppercase',
+                        color: 'var(--accent-on-light)',
+                      }}
+                    >
+                      {item.period}
+                    </span>
+                    <p style={{ margin: '8px 0 0', fontFamily: 'var(--font-serif)', fontSize: 'var(--size-h4)', fontWeight: 700, color: 'var(--ink)' }}>
                       {item.title}
                     </p>
-                    <p style={{ margin: '5px 0 0', fontSize: 'var(--size-small)', color: 'var(--text-muted)' }}>
+                    <p style={{ margin: '4px 0 0', fontSize: 'var(--size-small)', color: 'var(--ink-soft)' }}>
                       {item.org}
                     </p>
+                    <p style={{ margin: '10px 0 0', fontSize: 'var(--size-small)', lineHeight: 'var(--lh-body)', color: 'var(--ink-soft)' }}>
+                      {item.desc}
+                    </p>
                   </div>
-                  <p style={{ margin: 0, fontSize: 'var(--size-small)', lineHeight: 'var(--lh-body)', color: 'var(--text-body)' }}>
-                    {item.desc}
-                  </p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Certifications Section */}
+        {/* ---------- Certifications (scroll gallery kept, ERA treatment added) ---------- */}
         <section
           id="certifications"
+          data-era-arch
           aria-labelledby="certifications-heading"
           style={{
             position: 'relative',
-            background: 'var(--surface-inverse)',
-            color: 'var(--text-on-dark)',
+            zIndex: 2,
+            marginTop: '-70px',
+            background: 'var(--ink)',
+            color: 'var(--paper)',
+            borderTopLeftRadius: '150px',
+            borderTopRightRadius: '150px',
           }}
         >
           <h2 id="certifications-heading" style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>
             Certifications
           </h2>
           <div id="cert-scroller" style={{ position: 'relative', height: '360vh' }}>
-            <div id="cert-scroller-pin" style={{ position: 'sticky', top: 0, width: '100%', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '56px', boxSizing: 'border-box' }}>
+            <div id="cert-scroller-pin" style={{ position: 'sticky', top: 0, width: '100%', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: `clamp(28px, 5vw, 64px)`, boxSizing: 'border-box' }}>
+              <div
+                aria-hidden="true"
+                className="era-cert-progress"
+                style={{ position: 'absolute', top: 'clamp(24px, 5vh, 56px)', left: BAND_X, display: 'flex', alignItems: 'baseline', gap: '8px' }}
+              >
+                <span id="cert-progress-num" className="era-display" style={{ fontSize: 'clamp(44px, 6vw, 88px)', color: 'var(--paper)', opacity: 0.16 }}>
+                  01
+                </span>
+                <span style={{ fontFamily: 'var(--font-ui)', fontSize: '12px', fontWeight: 600, letterSpacing: '0.14em', color: 'var(--paper-on-dark)' }}>
+                  / 05
+                </span>
+              </div>
+              <div
+                aria-hidden="true"
+                className="era-cert-progressbar"
+                style={{ position: 'absolute', bottom: 'clamp(24px, 5vh, 56px)', left: BAND_X, right: BAND_X, height: '2px', background: 'rgba(242, 239, 230, 0.16)' }}
+              >
+                <div id="cert-progress-bar" style={{ height: '100%', width: '20%', background: 'var(--bougainvillea)', transition: 'width 600ms cubic-bezier(.25,1,.5,1)' }} />
+              </div>
               <div
                 id="cert-gallery-card"
+                data-era-cert-card
                 style={{
                   position: 'relative',
                   width: '100%',
@@ -525,12 +712,12 @@ export default function Home() {
                   gridTemplateColumns: '1.1fr 1fr',
                   background: 'var(--paper-0)',
                   border: '1px solid var(--border-hairline)',
-                  boxShadow: '0 24px 60px rgba(17,17,17,.14)',
+                  boxShadow: '0 24px 60px rgba(0,0,0,.3)',
                   overflow: 'hidden',
                 }}
               >
                 <div className="cert-gallery-list-col" style={{ padding: '56px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '24px', borderRight: '1px solid var(--border-hairline)' }}>
-                  <Eyebrow mark color="var(--vermilion-soft)">
+                  <Eyebrow mark color="var(--accent-on-light)">
                     Certifications
                   </Eyebrow>
                   <div id="cert-list-viewport" style={{ position: 'relative', height: '280px', overflow: 'hidden', WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)', maskImage: 'linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)' }}>
@@ -549,7 +736,7 @@ export default function Home() {
                             transition: 'transform 500ms var(--ease-out)',
                           }}
                         >
-                          <p className="cert-list-title" style={{ margin: 0, fontFamily: 'var(--font-serif)', fontSize: '21px', lineHeight: 1.2, color: idx === 0 ? 'var(--ink-1)' : 'var(--text-muted)', opacity: idx === 0 ? 1 : 0.45, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', transition: 'color 400ms,opacity 400ms' }}>
+                          <p className="cert-list-title" style={{ margin: 0, fontFamily: 'var(--font-serif)', fontSize: '21px', lineHeight: 1.2, color: idx === 0 ? 'var(--ink)' : 'var(--ink-soft)', opacity: idx === 0 ? 1 : 0.55, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', transition: 'color 400ms,opacity 400ms' }}>
                             {cert.title}
                           </p>
                           <p className="cert-list-meta" style={{ margin: '3px 0 0', fontSize: '10.5px', letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--text-muted)', opacity: idx === 0 ? 0.85 : 0.4, transition: 'opacity 400ms' }}>
@@ -559,8 +746,8 @@ export default function Home() {
                       ))}
                     </ul>
                   </div>
-                  <p style={{ margin: 0, fontSize: 'var(--size-small)', color: 'var(--text-muted)' }}>
-                    Scroll to move through each credential, or click a name to jump.
+                  <p style={{ margin: 0, fontSize: 'var(--size-small)', color: 'var(--ink-soft)' }}>
+                    Select a credential to see its certificate.
                   </p>
                 </div>
 
@@ -590,11 +777,15 @@ export default function Home() {
                           <span style={{ fontSize: '10.5px', letterSpacing: '.14em', textTransform: 'uppercase', color: 'rgba(247,240,223,.65)' }}>
                             {cert.provider}
                           </span>
-                          <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--size-h3)', color: 'var(--marigold)' }}>
+                          <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--size-h3)', fontWeight: 700, color: 'var(--accent-on-dark)' }}>
                             {String(idx + 1).padStart(2, '0')}
                           </span>
                         </div>
                         <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {/* Plain <img>: the tiles are an absolutely-positioned crossfade stack of
+                              mixed-aspect-ratio scans, all lazy and off the critical path, which the
+                              fixed-box model of next/image does not fit. */}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={cert.image} alt={cert.imageAlt} loading="lazy" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', background: 'var(--paper-0)', border: '1px solid rgba(247,240,223,.15)', boxShadow: '0 12px 30px rgba(0,0,0,.35)' }} />
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -613,8 +804,8 @@ export default function Home() {
                           <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontSize: '20px', lineHeight: 1.25, color: 'var(--paper-1)', maxWidth: '70%' }}>
                             {cert.title}
                           </p>
-                          <a href={cert.verifyUrl} target="_blank" rel="noopener noreferrer" style={{ flexShrink: 0, fontSize: 'var(--size-meta)', fontWeight: 700, color: 'var(--marigold)', textDecoration: 'none', borderBottom: '1px solid currentColor', paddingBottom: '2px', whiteSpace: 'nowrap' }}>
-                            Verify ↗
+                          <a href={cert.verifyUrl} target="_blank" rel="noopener noreferrer" style={{ flexShrink: 0, fontSize: 'var(--size-meta)', fontWeight: 700, color: 'var(--accent-on-dark)', textDecoration: 'none', borderBottom: '1px solid currentColor', paddingBottom: '2px', whiteSpace: 'nowrap' }}>
+                            Verify →
                           </a>
                         </div>
                       </div>
@@ -626,67 +817,151 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Toolkit Section */}
-        <section id="toolkit" aria-labelledby="toolkit-heading" style={{ position: 'relative', padding: '96px 56px', overflow: 'hidden' }}>
-          <span data-px="-0.14" aria-hidden="true" style={{ position: 'absolute', left: '-70px', top: '24%', width: '260px', height: '260px', background: 'var(--vermilion)', opacity: 0.12, pointerEvents: 'none' }} />
-          <div style={{ position: 'relative', maxWidth: '1240px', margin: '0 auto' }}>
-            <div style={{ paddingBottom: '48px' }}>
-              <SectionHeading eyebrow="Toolkit" title="What I can do for you" headingId="toolkit-heading" />
-            </div>
-            <div data-reveal="10" style={{ animation: 'revealIn 640ms var(--ease-out) both', animationTimeline: 'view', animationRange: 'entry 6% cover 28%', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: '36px 0', borderTop: '2px solid var(--ink-1)', paddingTop: '36px' }}>
-              <ServiceItem tone="dark" divider={false} icon="✳" title="Finance" description="Financial modeling, cost accounting, quantitative analysis, valuation fundamentals." />
-              <ServiceItem tone="dark" icon="✳" title="Analytics" description="Excel with pivot tables, VLOOKUP and models, plus data interpretation." />
-              <ServiceItem tone="dark" icon="✳" title="Management" description="Project planning, Agile methods, risk tracking, operations management, team coordination." />
-              <ServiceItem tone="dark" icon="✳" title="Certified" description="Google Project Management, Google AI Essentials, UPenn Finance & Quantitative Modeling, Citi and Deloitte simulations." />
+        {/* ---------- Toolkit (burgundy) ---------- */}
+        <section
+          id="toolkit"
+          aria-labelledby="toolkit-heading"
+          style={{ position: 'relative', padding: `clamp(90px, 12vw, 150px) ${BAND_X}`, background: 'var(--burgundy)', color: 'var(--paper)', overflow: 'hidden' }}
+        >
+          <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
+            <span className="era-eyebrow" style={{ color: 'var(--paper-on-dark)' }}>
+              Toolkit
+            </span>
+            <h2
+              id="toolkit-heading"
+              data-era-scrub
+              className="era-display"
+              style={{ margin: '18px 0 0', fontSize: 'clamp(40px, 8vw, 116px)', maxWidth: '14ch', color: 'var(--paper)' }}
+            >
+              What I can do for you
+            </h2>
+
+            <div
+              data-era-reveal
+              className="responsive-grid-2col"
+              style={{
+                marginTop: 'clamp(48px, 7vw, 88px)',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                gap: '40px 0',
+                borderTop: '1px solid var(--rule-ink-strong)',
+                paddingTop: '40px',
+              }}
+            >
+              <ServiceItem tone="light" divider={false} icon="•" title="Finance" description="Financial modeling, cost accounting, quantitative analysis, valuation fundamentals." />
+              <ServiceItem tone="light" icon="•" title="Analytics" description="Excel with pivot tables, VLOOKUP and models, plus data interpretation." />
+              <ServiceItem tone="light" icon="•" title="Management" description="Project planning, Agile methods, risk tracking, operations management, team coordination." />
+              <ServiceItem tone="light" icon="•" title="Certified" description="Google Project Management, Google AI Essentials, UPenn Finance & Quantitative Modeling, Citi and Deloitte simulations." />
             </div>
           </div>
         </section>
 
-        {/* Contact Section */}
-        <section id="contact" style={{ position: 'relative', background: 'var(--surface-accent-alt)', color: 'var(--ink-1)', padding: '110px 56px 40px', overflow: 'hidden' }}>
-          <span data-px="0.2" aria-hidden="true" style={{ position: 'absolute', right: '8%', top: '-30px', width: '200px', height: '200px', backgroundImage: 'var(--halftone)', backgroundSize: 'var(--halftone-size)', opacity: 0.28, pointerEvents: 'none' }} />
-          <div style={{ position: 'relative', maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '30px', alignItems: 'flex-start' }}>
-            <Eyebrow mark color="var(--ink-1)">
-              Contact
-            </Eyebrow>
+        {/* ---------- Contact ---------- */}
+        <section
+          id="contact"
+          aria-labelledby="contact-heading"
+          style={{ position: 'relative', background: 'var(--paper)', color: 'var(--ink)', padding: `clamp(90px, 12vw, 150px) ${BAND_X} clamp(70px, 9vw, 110px)`, overflow: 'hidden' }}
+        >
+          <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '30px', alignItems: 'flex-start' }}>
+            <span className="era-eyebrow">Contact</span>
             <h2
               id="contact-heading"
               style={{
                 margin: 0,
                 maxWidth: '26ch',
                 fontFamily: 'var(--font-serif)',
-                fontSize: 'clamp(32px,5vw,64px)',
+                fontSize: 'clamp(32px, 5vw, 64px)',
                 lineHeight: 'var(--lh-h1)',
                 letterSpacing: '-.01em',
-                color: 'var(--ink-1)',
+                color: 'var(--ink)',
               }}
             >
-              Have a role in mind? I&apos;d <em style={{ fontStyle: 'italic' }}>love</em> to hear about it.
+              Have a role in mind? I&apos;d <em>love</em> to hear about it.
             </h2>
-            <Button variant="primary" size="lg" href="mailto:swayamagrawal17@gmail.com">
-              Email me
+            <Button variant="dark" size="lg" href={`mailto:${CONTACT_EMAIL}`}>
+              Email me directly
             </Button>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer ref={footerRef} style={{ background: 'var(--marigold)', padding: '36px 56px 32px', boxSizing: 'border-box' }}>
-        <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-          <div data-reveal="17" style={{ animation: 'revealIn 640ms var(--ease-out) both', animationTimeline: 'view', animationRange: 'entry 6% cover 28%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
-            <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="Swayam Agrawal" style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>
-              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 400, fontSize: '19px', textTransform: 'uppercase', letterSpacing: '-.01em', color: 'var(--ink-1)' }}>
+      {/* ---------- Footer ---------- */}
+      <footer style={{ background: 'var(--paper-deep)', padding: `64px ${BAND_X} 44px`, boxSizing: 'border-box' }}>
+        <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px 32px' }}>
+            <button
+              type="button"
+              onClick={() => scrollToTop()}
+              aria-label="Back to top"
+              style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+            >
+              <span
+                className="era-display"
+                style={{ fontSize: '20px', color: 'var(--ink)' }}
+              >
                 Swayam Agrawal
               </span>
-            </a>
+            </button>
+
+            <nav aria-label="Footer">
+              <ul style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', margin: 0, padding: 0, gap: '28px' }}>
+                {['Work', 'About', 'Toolkit', 'Contact'].map((label) => (
+                  <li key={label}>
+                    <a
+                      href={`#${label.toLowerCase()}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        scrollTo(label.toLowerCase());
+                      }}
+                      style={{ fontSize: 'var(--size-small)', fontWeight: 600, color: 'var(--ink-soft)', textDecoration: 'none' }}
+                    >
+                      <RandomLetterSwap label={label} staggerDuration={0.03} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
             <div style={{ display: 'flex', gap: '10px' }}>
-              <a href="https://www.linkedin.com/in/swayam-agrawal-" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="nav-scramble" data-original="in" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline)', color: 'var(--ink-1)', fontSize: 'var(--size-small)', fontWeight: 700, textDecoration: 'none', cursor: 'pointer' }}>
-                in
-              </a>
-              <a href="mailto:swayamagrawal17@gmail.com" aria-label="Email" className="nav-scramble" data-original="@" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline)', color: 'var(--ink-1)', fontSize: 'var(--size-small)', fontWeight: 700, textDecoration: 'none', cursor: 'pointer' }}>
-                @
+              <a
+                href={LINKEDIN_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: 'var(--radius-stamp)',
+                  border: '1px solid var(--rule-ink-strong)',
+                  color: 'var(--ink)',
+                  textDecoration: 'none',
+                  boxShadow: '0 8px 20px -10px rgba(27, 42, 58, 0.4)',
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z" />
+                </svg>
               </a>
             </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: '40px',
+              paddingTop: '26px',
+              borderTop: '1px solid var(--rule-ink)',
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '8px 20px',
+            }}
+          >
+            <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>© {new Date().getFullYear()} Swayam Agrawal</span>
+            <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>Pune, India</span>
           </div>
         </div>
       </footer>

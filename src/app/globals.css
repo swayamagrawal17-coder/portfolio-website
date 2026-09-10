@@ -461,9 +461,15 @@ a {
     transform: scale(0.7);
     transform-origin: top left;
   }
-  /* Work arch reveal: drop the scroll runway on phones, show the panel then the coverflow */
+  /* Work section: edge-to-edge navy on phones (no cream gutter, no arch reveal) */
+  #work {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    background: var(--ink) !important;
+  }
   [data-era-arch-reveal] {
     height: auto !important;
+    background: var(--ink) !important;
   }
   [data-era-arch-stage] {
     position: static !important;
@@ -478,8 +484,8 @@ a {
     visibility: visible !important;
     transform: none !important;
     position: relative !important;
-    padding-top: 15vh !important;
-    padding-bottom: 15vh !important;
+    padding-top: 12vh !important;
+    padding-bottom: 10vh !important;
   }
   [data-era-arch-label] {
     display: none !important;

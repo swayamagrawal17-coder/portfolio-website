@@ -545,20 +545,22 @@ export default function Home() {
                 ))}
               </div>
 
-              <div role="group" aria-label="Project carousel controls" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '18px', marginTop: '24px', flexWrap: 'wrap' }}>
-                <button type="button" id="coverflow-prev" aria-label="Previous project" style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline-inverse)', background: 'transparent', color: 'var(--paper)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', boxShadow: '0 10px 26px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(242, 239, 230, 0.08)' }}>
-                  &lt;
-                </button>
-                <div role="tablist" aria-label="Choose a project" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  {projects.map((project, i) => (
-                    <button key={i} type="button" className="coverflow-dot" role="tab" aria-label={`Project ${i + 1}: ${project.title}`} aria-selected={i === 0} style={{ height: '32px', width: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}>
-                      <span style={{ display: 'block', flexShrink: 0, height: '8px', width: '8px', borderRadius: 'var(--radius-pill)', background: 'var(--rule-on-dark)', transition: 'all 300ms cubic-bezier(.25,1,.5,1)' }} />
-                    </button>
-                  ))}
+              <div role="group" aria-label="Project carousel controls" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px 18px', marginTop: '24px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', flexWrap: 'nowrap', alignItems: 'center', justifyContent: 'center', gap: 'clamp(8px, 3vw, 18px)' }}>
+                  <button type="button" id="coverflow-prev" aria-label="Previous project" style={{ flexShrink: 0, width: '44px', height: '44px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline-inverse)', background: 'transparent', color: 'var(--paper)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', boxShadow: '0 10px 26px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(242, 239, 230, 0.08)' }}>
+                    &lt;
+                  </button>
+                  <div role="tablist" aria-label="Choose a project" style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                    {projects.map((project, i) => (
+                      <button key={i} type="button" className="coverflow-dot" role="tab" aria-label={`Project ${i + 1}: ${project.title}`} aria-selected={i === 0} style={{ height: '32px', width: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}>
+                        <span style={{ display: 'block', flexShrink: 0, height: '8px', width: '8px', borderRadius: 'var(--radius-pill)', background: 'var(--rule-on-dark)', transition: 'all 300ms cubic-bezier(.25,1,.5,1)' }} />
+                      </button>
+                    ))}
+                  </div>
+                  <button type="button" id="coverflow-next" aria-label="Next project" style={{ flexShrink: 0, width: '44px', height: '44px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline-inverse)', background: 'transparent', color: 'var(--paper)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', boxShadow: '0 10px 26px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(242, 239, 230, 0.08)' }}>
+                    &gt;
+                  </button>
                 </div>
-                <button type="button" id="coverflow-next" aria-label="Next project" style={{ width: '44px', height: '44px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline-inverse)', background: 'transparent', color: 'var(--paper)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', boxShadow: '0 10px 26px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(242, 239, 230, 0.08)' }}>
-                  &gt;
-                </button>
                 <button
                   type="button"
                   id="coverflow-toggle"

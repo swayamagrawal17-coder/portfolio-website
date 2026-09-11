@@ -551,3 +551,109 @@ a {
     display: none !important;
   }
 }
+
+/* ============================================================
+   Side projects — "the ledger writes itself" (Bahi Khaata demo)
+   Same mechanism as the Certifications gallery: a CSS-sticky pin
+   over a tall runway, with useBuildsLedger toggling .is-recorded
+   on each row as it is scrolled through.
+   ============================================================ */
+.builds-row {
+  display: grid;
+  grid-template-columns: 92px 1fr auto auto;
+  gap: 18px;
+  align-items: baseline;
+  padding: clamp(12px, 1.6vw, 16px) 0;
+  border-bottom: 1px solid rgba(242, 239, 230, 0.08);
+  opacity: 0.14;
+  transform: translateY(10px);
+  filter: blur(3px);
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out),
+    filter 500ms var(--ease-out);
+}
+.builds-row.is-recorded {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.builds-row-date,
+.builds-row-section,
+.builds-row-len {
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-on-dark);
+}
+.builds-row-title {
+  font-family: var(--font-serif);
+  font-size: clamp(15px, 2.4vw, 20px);
+  line-height: 1.25;
+  color: var(--paper);
+}
+.builds-cta {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+}
+#builds-panel.is-complete .builds-cta {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+@media (max-width: 640px) {
+  #builds-ledger-pin {
+    padding: 12px !important;
+  }
+  #builds-panel {
+    max-width: 460px;
+  }
+  .builds-cols {
+    display: none !important;
+  }
+  .builds-row {
+    display: block;
+  }
+  .builds-row-date,
+  .builds-row-section,
+  .builds-row-len {
+    display: inline;
+  }
+  .builds-row-date::after,
+  .builds-row-section::after {
+    content: " / ";
+    opacity: 0.5;
+  }
+  .builds-row-title {
+    display: block;
+    margin-top: 5px;
+  }
+}
+
+/* Reduced motion: no pin, every entry shown as a static readable ledger */
+@media (prefers-reduced-motion: reduce) {
+  #builds-ledger {
+    height: auto !important;
+  }
+  #builds-ledger-pin {
+    position: static !important;
+    height: auto !important;
+    display: block !important;
+    padding: clamp(20px, 5vw, 48px) !important;
+  }
+  .builds-row {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .builds-cta {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+  #builds-count {
+    display: none !important;
+  }
+}

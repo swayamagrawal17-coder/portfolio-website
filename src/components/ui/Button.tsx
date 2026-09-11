@@ -16,6 +16,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement | HTM
   size?: ButtonSize;
   arrow?: boolean;
   href?: string;
+  target?: string;
+  rel?: string;
   children: React.ReactNode;
   disabled?: boolean;
 }

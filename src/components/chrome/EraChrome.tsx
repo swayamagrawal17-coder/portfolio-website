@@ -18,6 +18,7 @@ interface EraChromeProps {
 
 const NAV: { label: string; target: string }[] = [
   { label: 'Work', target: 'work' },
+  { label: 'Projects', target: 'builds' },
   { label: 'About', target: 'about' },
   { label: 'Certifications', target: 'certifications' },
   { label: 'Toolkit', target: 'toolkit' },

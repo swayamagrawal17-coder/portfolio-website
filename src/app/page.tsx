@@ -11,11 +11,13 @@ import { useEraReveals } from '@/hooks/useEraReveals';
 import { useStatsCountUp } from '@/hooks/useStatsCountUp';
 import { useWorkCoverflow } from '@/hooks/useWorkCoverflow';
 import { useCertScroller } from '@/hooks/useCertScroller';
+import { useBuildsLedger } from '@/hooks/useBuildsLedger';
 import { scrollTo, scrollToTop } from '@/hooks/useScrollTo';
 import { projects } from '@/lib/projects';
 import { certifications } from '@/lib/certifications';
 import { stats } from '@/lib/stats';
 import { experience } from '@/lib/experience';
+import { builds } from '@/lib/builds';
 import { CONTACT_EMAIL, LINKEDIN_URL } from '@/lib/site';
 
 const CHROME_SECTIONS: ChromeSection[] = [
@@ -23,6 +25,7 @@ const CHROME_SECTIONS: ChromeSection[] = [
   { id: 'proof', label: 'By the numbers', tone: 'dark' },
   { id: 'about', label: 'About', tone: 'light' },
   { id: 'work', label: 'Selected work', tone: 'dark' },
+  { id: 'builds', label: 'Side projects', tone: 'dark' },
   { id: 'experience', label: 'Track record', tone: 'light' },
   { id: 'certifications', label: 'Certifications', tone: 'dark' },
   { id: 'toolkit', label: 'Toolkit', tone: 'dark' },
@@ -34,6 +37,7 @@ const BAND_X = 'clamp(28px, 6vw, 96px)';
 export default function Home() {
   const { containerRef: workContainer, stageRef: workStage } = useWorkCoverflow();
   useCertScroller();
+  useBuildsLedger();
   useEraReveals();
 
   const statsRef = useRef<HTMLDivElement>(null);
@@ -598,6 +602,198 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ---------- Side projects (Bahi Khaata live demo + EMI teaser) ---------- */}
+        <section
+          id="builds"
+          aria-labelledby="builds-heading"
+          style={{
+            position: 'relative',
+            padding: `clamp(90px, 12vw, 150px) ${BAND_X}`,
+            background: 'var(--burgundy)',
+            color: 'var(--paper)',
+            borderTop: '1px solid var(--rule-on-dark)',
+          }}
+        >
+          <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
+            <span className="era-eyebrow" style={{ color: 'var(--paper-on-dark)' }}>
+              Side projects
+            </span>
+            <h2
+              id="builds-heading"
+              data-era-scrub
+              className="era-display"
+              style={{ margin: '18px 0 0', fontSize: 'clamp(40px, 8vw, 116px)', maxWidth: '16ch', color: 'var(--paper)' }}
+            >
+              Things I make with AI
+            </h2>
+            <p style={{ margin: '22px 0 0', maxWidth: '58ch', fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--paper-on-dark)' }}>
+              I don&apos;t write code. I&apos;m from a commerce background, so I design these sites and
+              build them with AI tools. The part that&apos;s mine is what goes inside: the research,
+              the numbers, and the writing.
+            </p>
+          </div>
+
+          {/* Bahi Khaata — the ledger writes itself as you scroll */}
+          {builds
+            .filter((b) => b.status === 'live' && b.entries?.length)
+            .slice(0, 1)
+            .map((build) => (
+              <div key={build.id} id="builds-ledger" style={{ position: 'relative', height: '300vh', marginTop: 'clamp(40px, 6vw, 72px)' }}>
+                <div
+                  id="builds-ledger-pin"
+                  style={{
+                    position: 'sticky',
+                    top: 0,
+                    height: '100vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 'clamp(20px, 4vw, 48px)',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <div
+                    id="builds-panel"
+                    style={{
+                      position: 'relative',
+                      width: '100%',
+                      maxWidth: '900px',
+                      background: '#141210',
+                      border: '1px solid var(--rule-on-dark)',
+                      borderRadius: 'var(--radius-lg)',
+                      boxShadow: '0 30px 80px rgba(0, 0, 0, 0.45)',
+                      padding: 'clamp(24px, 4vw, 48px)',
+                      boxSizing: 'border-box',
+                    }}
+                  >
+                    {/* header — mirrors bahi-khaata.vercel.app */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                      <svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true" style={{ flexShrink: 0 }}>
+                        <rect x="1" y="1" width="20" height="24" rx="1.5" fill="var(--accent-on-light)" />
+                        <line x1="6" y1="1" x2="6" y2="25" stroke="#141210" strokeWidth="1" />
+                        <line x1="10" y1="7" x2="17" y2="7" stroke="#141210" strokeWidth="1" />
+                        <line x1="10" y1="11" x2="17" y2="11" stroke="#141210" strokeWidth="1" />
+                      </svg>
+                      <div>
+                        <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'var(--size-h3)', color: 'var(--paper)' }}>
+                          {build.name}
+                        </p>
+                        <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'var(--size-small)', color: 'var(--paper-on-dark)' }}>
+                          {build.tagline}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p style={{ margin: 'clamp(16px, 2.5vw, 24px) 0 0', maxWidth: '58ch', fontSize: 'var(--size-small)', lineHeight: 'var(--lh-body)', color: 'var(--paper-on-dark)' }}>
+                      {build.summary}
+                    </p>
+
+                    {/* column headers + rule that draws on scroll */}
+                    <div data-era-draw-trigger style={{ marginTop: 'clamp(20px, 3vw, 32px)' }}>
+                      <div
+                        className="builds-cols"
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '92px 1fr auto auto',
+                          gap: '18px',
+                          fontFamily: 'var(--font-ui)',
+                          fontSize: '10px',
+                          fontWeight: 600,
+                          letterSpacing: '0.14em',
+                          textTransform: 'uppercase',
+                          color: 'rgba(242, 239, 230, 0.45)',
+                        }}
+                      >
+                        <span>Date</span>
+                        <span>Entry</span>
+                        <span>Section</span>
+                        <span>Length</span>
+                      </div>
+                      <svg
+                        viewBox="0 0 100 1"
+                        preserveAspectRatio="none"
+                        aria-hidden="true"
+                        style={{ display: 'block', width: '100%', height: '1px', marginTop: '10px', overflow: 'visible' }}
+                      >
+                        <path
+                          className="era-draw-path"
+                          d="M0,0.5 L100,0.5"
+                          fill="none"
+                          stroke="var(--rule-on-dark)"
+                          strokeWidth="1"
+                          vectorEffect="non-scaling-stroke"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* the rows */}
+                    <ol id="builds-rows" style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                      {build.entries!.map((entry, i) => (
+                        <li key={i} className="builds-row">
+                          <span className="builds-row-date">{entry.date}</span>
+                          <span className="builds-row-title">{entry.title}</span>
+                          <span className="builds-row-section">{entry.section}</span>
+                          <span className="builds-row-len">{entry.readTime}</span>
+                        </li>
+                      ))}
+                    </ol>
+
+                    {/* running count */}
+                    <div aria-hidden="true" style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginTop: 'clamp(18px, 3vw, 30px)' }}>
+                      <span id="builds-count" className="era-display" style={{ fontSize: 'clamp(34px, 5vw, 60px)', color: 'var(--paper)', opacity: 0.22 }}>
+                        00
+                      </span>
+                      <span style={{ fontFamily: 'var(--font-ui)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.14em', color: 'var(--paper-on-dark)' }}>
+                        / {String(build.entries!.length).padStart(2, '0')} ENTRIES RECORDED
+                      </span>
+                    </div>
+
+                    {/* CTA — revealed once every row is recorded */}
+                    <div className="builds-cta" style={{ marginTop: 'clamp(20px, 3vw, 28px)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '14px 20px' }}>
+                      <Button variant="primary" arrow href={build.url} target="_blank" rel="noopener noreferrer">
+                        Read the ledger
+                      </Button>
+                      {build.note && (
+                        <span style={{ fontSize: 'var(--size-small)', color: 'var(--paper-on-dark)' }}>{build.note}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+          {/* EMI calculator — in development */}
+          {builds
+            .filter((b) => b.status === 'in-development')
+            .map((build) => (
+              <div key={build.id} style={{ maxWidth: 'var(--content-max)', margin: 'clamp(20px, 4vw, 40px) auto 0' }}>
+                <div style={{ borderTop: '1px solid var(--rule-on-dark)', paddingTop: 'clamp(28px, 4vw, 44px)', display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '10px 18px' }}>
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-ui)',
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      letterSpacing: '0.16em',
+                      textTransform: 'uppercase',
+                      color: 'var(--accent-on-dark)',
+                      border: '1px solid var(--accent-on-dark)',
+                      borderRadius: '2px',
+                      padding: '4px 8px',
+                    }}
+                  >
+                    In development
+                  </span>
+                  <h3 style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'var(--size-h3)', color: 'var(--paper)' }}>
+                    {build.name}
+                  </h3>
+                </div>
+                <p style={{ margin: '14px 0 0', maxWidth: '54ch', fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--paper-on-dark)' }}>
+                  {build.summary}
+                </p>
+              </div>
+            ))}
+        </section>
+
         {/* ---------- Experience & education (wavy timeline) ---------- */}
         <section
           id="experience"
@@ -907,13 +1103,19 @@ export default function Home() {
 
             <nav aria-label="Footer">
               <ul style={{ listStyle: 'none', display: 'flex', flexWrap: 'wrap', margin: 0, padding: 0, gap: '28px' }}>
-                {['Work', 'About', 'Toolkit', 'Contact'].map((label) => (
-                  <li key={label}>
+                {[
+                  ['Work', 'work'],
+                  ['Projects', 'builds'],
+                  ['About', 'about'],
+                  ['Toolkit', 'toolkit'],
+                  ['Contact', 'contact'],
+                ].map(([label, target]) => (
+                  <li key={target}>
                     <a
-                      href={`#${label.toLowerCase()}`}
+                      href={`#${target}`}
                       onClick={(e) => {
                         e.preventDefault();
-                        scrollTo(label.toLowerCase());
+                        scrollTo(target);
                       }}
                       style={{ fontSize: 'var(--size-small)', fontWeight: 600, color: 'var(--ink-soft)', textDecoration: 'none' }}
                     >

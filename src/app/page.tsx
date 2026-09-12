@@ -114,7 +114,7 @@ export default function Home() {
                   aria-hidden="true"
                   style={{
                     position: 'absolute',
-                    right: 'clamp(-14px, -1.5vw, -6px)',
+                    right: 'clamp(-14px, -1.1vw, -2px)',
                     bottom: 'clamp(-24px, -2.6vw, -12px)',
                     fontSize: 'clamp(30px, 6vw, 76px)',
                     color: 'var(--accent-on-light)',
@@ -212,7 +212,7 @@ export default function Home() {
                       color: 'var(--paper)',
                     }}
                   >
-                    <span data-count-to={stat.value} data-decimals={stat.decimals}>
+                    <span data-count-to={stat.value} data-decimals={stat.decimals} style={{ fontVariantNumeric: 'tabular-nums' }}>
                       {stat.value.toFixed(stat.decimals)}
                     </span>
                     <span style={{ fontSize: '0.42em', color: 'var(--bougainvillea)' }}>{stat.suffix}</span>
@@ -794,38 +794,38 @@ export default function Home() {
                         position: 'relative',
                         width: '100%',
                         maxWidth: '900px',
-                        background: '#fcfbf8',
-                        border: '1px solid #dcd7cc',
+                        background: 'var(--horizon-paper)',
+                        border: '1px solid var(--horizon-rule)',
                         borderRadius: 'var(--radius-lg)',
                         boxShadow: '0 30px 80px rgba(0, 0, 0, 0.45)',
                         padding: 'clamp(24px, 4vw, 48px)',
                         boxSizing: 'border-box',
-                        color: '#191b19',
+                        color: 'var(--horizon-ink)',
                       }}
                     >
                       {/* header — mirrors horizon-calc.vercel.app's mark: a half-sun over a horizon rule */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                         <svg width="26" height="20" viewBox="0 0 26 20" aria-hidden="true" style={{ flexShrink: 0 }}>
-                          <line x1="1" y1="15" x2="25" y2="15" stroke="#191b19" strokeWidth="1.4" />
-                          <path d="M6,15 A7,7 0 0 1 20,15 Z" fill="#b23b1e" />
+                          <line x1="1" y1="15" x2="25" y2="15" stroke="var(--horizon-ink)" strokeWidth="1.4" />
+                          <path d="M6,15 A7,7 0 0 1 20,15 Z" fill="var(--horizon-accent)" />
                         </svg>
                         <div>
-                          <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'var(--size-h3)', color: '#191b19' }}>
+                          <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'var(--size-h3)', color: 'var(--horizon-ink)' }}>
                             {build.name}
                           </p>
-                          <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'var(--size-small)', color: '#52564f' }}>
+                          <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'var(--size-small)', color: 'var(--horizon-ink-2)' }}>
                             {build.tagline}
                           </p>
                         </div>
                       </div>
 
-                      <p style={{ margin: 'clamp(16px, 2.5vw, 24px) 0 0', maxWidth: '58ch', fontSize: 'var(--size-small)', lineHeight: 'var(--lh-body)', color: '#52564f' }}>
+                      <p style={{ margin: 'clamp(16px, 2.5vw, 24px) 0 0', maxWidth: '58ch', fontSize: 'var(--size-small)', lineHeight: 'var(--lh-body)', color: 'var(--horizon-ink-2)' }}>
                         {build.summary}
                       </p>
 
                       {/* the worked example — a real default state from the calculator */}
                       <div style={{ marginTop: 'clamp(22px, 3.5vw, 34px)' }}>
-                        <span style={{ fontFamily: 'var(--font-ui)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#8a8477' }}>
+                        <span style={{ fontFamily: 'var(--font-ui)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--horizon-label)' }}>
                           Monthly EMI
                         </span>
                         <p style={{ margin: '4px 0 0' }}>
@@ -838,13 +838,13 @@ export default function Home() {
                               fontSize: 'clamp(32px, 5vw, 56px)',
                               lineHeight: 0.95,
                               letterSpacing: '-0.02em',
-                              color: '#191b19',
+                              color: 'var(--horizon-ink)',
                             }}
                           >
                             {demo.emiLabel}
                           </span>
                         </p>
-                        <span style={{ fontFamily: 'var(--font-ui)', fontSize: '11.5px', color: '#52564f' }}>
+                        <span style={{ fontFamily: 'var(--font-ui)', fontSize: '11.5px', color: 'var(--horizon-ink-2)' }}>
                           {demo.principalLabel} · {demo.rateLabel} · {demo.tenureLabel}
                         </span>
                       </div>
@@ -857,17 +857,17 @@ export default function Home() {
                           aria-hidden="true"
                           style={{ display: 'block', width: '100%', height: 'clamp(120px, 18vw, 170px)', overflow: 'visible' }}
                         >
-                          <line x1="0" y1="151" x2="400" y2="151" stroke="#dcd7cc" strokeWidth="1" />
-                          <path id="horizon-balance-path" d="M0,10 C220,18 300,70 400,152" fill="none" stroke="#191b19" strokeWidth="2" />
+                          <line x1="0" y1="151" x2="400" y2="151" stroke="var(--horizon-rule)" strokeWidth="1" />
+                          <path id="horizon-balance-path" d="M0,10 C220,18 300,70 400,152" fill="none" stroke="var(--horizon-ink)" strokeWidth="2" />
                           <path
                             id="horizon-interest-path"
                             d="M0,152 C60,128 150,127 400,127"
                             fill="none"
-                            stroke="#b23b1e"
+                            stroke="var(--horizon-accent)"
                             strokeWidth="1.6"
                             strokeDasharray="5 4"
                           />
-                          <circle id="horizon-dot" cx="0" cy="10" r="3.5" fill="#191b19" style={{ opacity: 0 }} />
+                          <circle id="horizon-dot" cx="0" cy="10" r="3.5" fill="var(--horizon-ink)" style={{ opacity: 0 }} />
                         </svg>
                         <div
                           style={{
@@ -878,19 +878,19 @@ export default function Home() {
                             fontSize: '10px',
                             letterSpacing: '0.08em',
                             textTransform: 'uppercase',
-                            color: '#8a8477',
+                            color: 'var(--horizon-label)',
                           }}
                         >
                           <span>0</span>
                           <span>{demo.tenureLabel}</span>
                         </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '18px', marginTop: '10px', fontSize: 'var(--size-small)', color: '#52564f' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '18px', marginTop: '10px', fontSize: 'var(--size-small)', color: 'var(--horizon-ink-2)' }}>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ width: '14px', height: '2px', background: '#191b19', display: 'inline-block' }} />
+                            <span style={{ width: '14px', height: '2px', background: 'var(--horizon-ink)', display: 'inline-block' }} />
                             Outstanding balance
                           </span>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ width: '14px', height: '2px', background: '#b23b1e', display: 'inline-block' }} />
+                            <span style={{ width: '14px', height: '2px', background: 'var(--horizon-accent)', display: 'inline-block' }} />
                             Interest paid so far
                           </span>
                         </div>
@@ -902,7 +902,7 @@ export default function Home() {
                           <span id="horizon-split-black" data-target={demo.principalPct} style={{ width: `${demo.principalPct}%` }} />
                           <span id="horizon-split-red" data-target={demo.interestPct} style={{ width: `${demo.interestPct}%` }} />
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontFamily: 'var(--font-ui)', fontSize: '10.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#52564f' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontFamily: 'var(--font-ui)', fontSize: '10.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--horizon-ink-2)' }}>
                           <span>Principal · {demo.principalPct}%</span>
                           <span>Interest · {demo.interestPct}%</span>
                         </div>
@@ -910,14 +910,14 @@ export default function Home() {
 
                       {/* stats + CTA — revealed once the demo finishes drawing */}
                       <div className="demo-reveal" style={{ marginTop: 'clamp(22px, 3.5vw, 32px)' }}>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 28px', paddingTop: 'clamp(16px, 2.5vw, 22px)', borderTop: '1px solid #dcd7cc' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 28px', paddingTop: 'clamp(16px, 2.5vw, 22px)', borderTop: '1px solid var(--horizon-rule)' }}>
                           {[
                             ['Total interest', demo.totalInterestLabel],
                             ['Total repayment', demo.totalRepaymentLabel],
                             ['Effective tenure', demo.tenureLabel],
                           ].map(([label, value]) => (
                             <div key={label}>
-                              <p style={{ margin: 0, fontFamily: 'var(--font-ui)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#8a8477' }}>
+                              <p style={{ margin: 0, fontFamily: 'var(--font-ui)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--horizon-label)' }}>
                                 {label}
                               </p>
                               <p
@@ -928,7 +928,7 @@ export default function Home() {
                                   fontSize: 'var(--size-h4)',
                                   lineHeight: 0.95,
                                   letterSpacing: '-0.02em',
-                                  color: '#191b19',
+                                  color: 'var(--horizon-ink)',
                                 }}
                               >
                                 {value}
@@ -940,7 +940,7 @@ export default function Home() {
                           <Button variant="dark" arrow href={build.url} target="_blank" rel="noopener noreferrer">
                             Open the calculator
                           </Button>
-                          {build.note && <span style={{ fontSize: 'var(--size-small)', color: '#52564f' }}>{build.note}</span>}
+                          {build.note && <span style={{ fontSize: 'var(--size-small)', color: 'var(--horizon-ink-2)' }}>{build.note}</span>}
                         </div>
                       </div>
                     </div>
@@ -1268,9 +1268,76 @@ export default function Home() {
             >
               Have a role in mind? I&apos;d <em>love</em> to hear about it.
             </h2>
-            <Button variant="dark" size="lg" href={`mailto:${CONTACT_EMAIL}`}>
-              Email me directly
-            </Button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+              <Button variant="dark" size="lg" href={`mailto:${CONTACT_EMAIL}`}>
+                Email me directly
+              </Button>
+              <button
+                type="button"
+                aria-label={`Copy email address, ${CONTACT_EMAIL}`}
+                onClick={async (e) => {
+                  const btn = e.currentTarget;
+                  const label = btn.querySelector('[data-copy-label]') as HTMLElement | null;
+                  const icon = btn.querySelector('[data-copy-icon]') as HTMLElement | null;
+                  const check = btn.querySelector('[data-check-icon]') as HTMLElement | null;
+                  const status = document.getElementById('copy-email-status');
+                  try {
+                    await navigator.clipboard.writeText(CONTACT_EMAIL);
+                    if (label) label.textContent = 'Copied!';
+                    if (icon) icon.style.display = 'none';
+                    if (check) check.style.display = 'block';
+                    btn.style.borderColor = 'var(--accent-on-light)';
+                    btn.style.color = 'var(--accent-on-light)';
+                    if (status) status.textContent = 'Email address copied.';
+                    window.setTimeout(() => {
+                      if (label) label.textContent = 'Copy email';
+                      if (icon) icon.style.display = 'block';
+                      if (check) check.style.display = 'none';
+                      btn.style.borderColor = 'var(--ink)';
+                      btn.style.color = 'var(--ink)';
+                      if (status) status.textContent = '';
+                    }, 2200);
+                  } catch {
+                    // Clipboard API unavailable (e.g. insecure context) — the
+                    // mailto button above still works on its own.
+                    if (status) status.textContent = 'Could not copy automatically — use the email button instead.';
+                  }
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  height: '52px',
+                  padding: '0 22px',
+                  flexShrink: 0,
+                  background: 'transparent',
+                  border: '2px solid var(--ink)',
+                  borderRadius: 'var(--radius-pill)',
+                  color: 'var(--ink)',
+                  fontFamily: 'var(--font-ui)',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  transition: 'color 200ms var(--ease-out), border-color 200ms var(--ease-out)',
+                }}
+              >
+                <svg data-copy-icon width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+                  <rect x="6" y="6" width="10" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M12 6V3.5A1.5 1.5 0 0 0 10.5 2h-7A1.5 1.5 0 0 0 2 3.5v7A1.5 1.5 0 0 0 3.5 12H6" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+                <svg data-check-icon width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style={{ display: 'none', flexShrink: 0 }}>
+                  <path d="M3.5 9.5L7 13L14.5 5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span data-copy-label>Copy email</span>
+              </button>
+            </div>
+            <p
+              aria-live="polite"
+              id="copy-email-status"
+              style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}
+            />
           </div>
         </section>
       </main>
@@ -1357,6 +1424,7 @@ export default function Home() {
             }}
           >
             <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>© {new Date().getFullYear()} Swayam Agrawal</span>
+            <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>No cookies. Anonymous page-view analytics only.</span>
             <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>Pune, India</span>
           </div>
         </div>

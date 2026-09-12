@@ -35,6 +35,16 @@
   --navy: var(--ink);
   --cream-2: var(--paper);
 
+  /* Horizon demo card (Side projects) — mirrors that product's own brand
+     palette (warm paper, black ink, rust accent), not the site's own tokens.
+     Named here instead of left as inline hex so it stays maintainable. */
+  --horizon-paper: #fcfbf8;
+  --horizon-rule: #dcd7cc;
+  --horizon-ink: #191b19;
+  --horizon-ink-2: #52564f; /* body copy — AA on --horizon-paper (7.2:1) */
+  --horizon-label: #6e6a5e; /* small uppercase labels — AA on --horizon-paper (5.2:1) */
+  --horizon-accent: #b23b1e;
+
   /* Fonts — --font-*-var are set by next/font in layout.tsx */
   --font-serif-fallback: Georgia, "Times New Roman", serif;
   --font-ui-fallback: Helvetica, Arial, sans-serif;
@@ -340,6 +350,15 @@ a {
     max-height: 60vh;
     width: auto !important;
     max-width: 100%;
+  }
+  /* Toolkit: "Finance" has divider={false} because on the desktop row it's
+     the leading item (no divider before the first column). Once the grid
+     above collapses to one column, that leaves it flush left while
+     Analytics/Management/Certified are still indented with their rule,
+     so give it the same treatment as its siblings here. */
+  #toolkit .responsive-grid-2col > div:first-child {
+    padding: 0 30px !important;
+    border-left: 1px solid var(--border-hairline-inverse) !important;
   }
 }
 
@@ -670,20 +689,29 @@ a {
   height: 8px;
   border-radius: 4px;
   overflow: hidden;
-  background: #dcd7cc;
+  background: var(--horizon-rule);
 }
 .horizon-split-bar > span:first-child {
-  background: #191b19;
+  background: var(--horizon-ink);
   height: 100%;
 }
 .horizon-split-bar > span:last-child {
-  background: #b23b1e;
+  background: var(--horizon-accent);
   height: 100%;
 }
 
 @media (max-width: 640px) {
   #horizon-demo-pin {
     padding: 12px !important;
+  }
+  /* Phones drift a lot between a sticky element's CSS `vh` math and the
+     actual visible area (the address bar collapsing/expanding mid-scroll),
+     enough that this pin could still read as "stuck" for a beat after the
+     Bahi Khaata ledger's pin above it releases, and the two would paint on
+     top of each other. A generous plain gap (well past any realistic drift)
+     guarantees the first one is fully released before this one can engage. */
+  #horizon-demo {
+    margin-top: 22vh !important;
   }
 }
 

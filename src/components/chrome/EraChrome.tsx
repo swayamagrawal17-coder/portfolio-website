@@ -89,11 +89,33 @@ export function EraChrome({ sections }: EraChromeProps) {
     return () => io.disconnect();
   }, [sections]);
 
-  // Mobile menu: close on Escape, lock scroll, move focus in and back out.
+  // Mobile menu: close on Escape, lock scroll, move focus in and back out,
+  // and trap Tab/Shift+Tab inside the dialog while it's open — aria-modal
+  // only tells assistive tech the rest of the page is inert, it doesn't
+  // actually stop keyboard focus from leaving, so this does that part.
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const dialog = document.getElementById('era-mobile-nav');
+      if (!dialog) return;
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>('button, a[href]')
+      ).filter((el) => !el.hasAttribute('disabled'));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
@@ -417,7 +439,9 @@ export function EraChrome({ sections }: EraChromeProps) {
           <a
             href={`mailto:${CONTACT_EMAIL}`}
             style={{
-              marginTop: '22px',
+              display: 'block',
+              marginTop: '10px',
+              padding: '16px 0',
               fontFamily: 'var(--font-ui)',
               fontSize: '12px',
               fontWeight: 600,

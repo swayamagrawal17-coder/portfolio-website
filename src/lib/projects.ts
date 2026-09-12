@@ -32,6 +32,8 @@ export const projects: Project[] = [
       highlight: '96.1% had adopted UPI. 74.5% still hit connectivity failures.',
       details: 'The write-up ran to 33 pages and named seven barriers to financial inclusion.',
     },
+    // Independent field research, not client work — the full write-up is public.
+    reportUrl: 'https://bahi-khaata.vercel.app/posts/51-vendors-upi-adoption',
   },
   {
     id: 1,

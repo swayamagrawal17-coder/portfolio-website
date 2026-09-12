@@ -648,7 +648,13 @@ export default function Home() {
                   style={{
                     position: 'sticky',
                     top: 0,
-                    height: '100vh',
+                    // dvh (not vh): iOS Safari/Chrome's address bar hides and
+                    // shows as you scroll, so 100vh (the largest possible
+                    // viewport) is often taller than what's actually visible.
+                    // That mismatch is what let this pin and the next one
+                    // (Horizon) briefly overlap on real phones. dvh tracks
+                    // the real, current viewport instead.
+                    height: '100dvh',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -779,7 +785,9 @@ export default function Home() {
                     style={{
                       position: 'sticky',
                       top: 0,
-                      height: '100vh',
+                      // dvh, not vh — see the matching comment on
+                      // #builds-ledger-pin above.
+                      height: '100dvh',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',

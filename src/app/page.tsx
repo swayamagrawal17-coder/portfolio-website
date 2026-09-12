@@ -12,6 +12,7 @@ import { useStatsCountUp } from '@/hooks/useStatsCountUp';
 import { useWorkCoverflow } from '@/hooks/useWorkCoverflow';
 import { useCertScroller } from '@/hooks/useCertScroller';
 import { useBuildsLedger } from '@/hooks/useBuildsLedger';
+import { useHorizonDemo } from '@/hooks/useHorizonDemo';
 import { scrollTo, scrollToTop } from '@/hooks/useScrollTo';
 import { projects } from '@/lib/projects';
 import { certifications } from '@/lib/certifications';
@@ -38,6 +39,7 @@ export default function Home() {
   const { containerRef: workContainer, stageRef: workStage } = useWorkCoverflow();
   useCertScroller();
   useBuildsLedger();
+  useHorizonDemo();
   useEraReveals();
 
   const statsRef = useRef<HTMLDivElement>(null);
@@ -624,7 +626,9 @@ export default function Home() {
               className="era-display"
               style={{ margin: '18px 0 0', fontSize: 'clamp(40px, 8vw, 116px)', maxWidth: '16ch', color: 'var(--paper)' }}
             >
-              Things I make with AI
+              Things I make{' '}
+              <br />
+              with AI
             </h2>
             <p style={{ margin: '22px 0 0', maxWidth: '58ch', fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--paper-on-dark)' }}>
               I don&apos;t write code. I&apos;m from a commerce background, so I design these sites and
@@ -654,6 +658,7 @@ export default function Home() {
                 >
                   <div
                     id="builds-panel"
+                    className="demo-panel"
                     style={{
                       position: 'relative',
                       width: '100%',
@@ -749,7 +754,7 @@ export default function Home() {
                     </div>
 
                     {/* CTA — revealed once every row is recorded */}
-                    <div className="builds-cta" style={{ marginTop: 'clamp(20px, 3vw, 28px)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '14px 20px' }}>
+                    <div className="demo-reveal" style={{ marginTop: 'clamp(20px, 3vw, 28px)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '14px 20px' }}>
                       <Button variant="primary" arrow href={build.url} target="_blank" rel="noopener noreferrer">
                         Read the ledger
                       </Button>
@@ -761,6 +766,188 @@ export default function Home() {
                 </div>
               </div>
             ))}
+
+          {/* Horizon — the loan pays itself down as you scroll */}
+          {builds
+            .filter((b) => b.status === 'live' && b.demo)
+            .map((build) => {
+              const demo = build.demo!;
+              return (
+                <div key={build.id} id="horizon-demo" style={{ position: 'relative', height: '260vh', marginTop: 'clamp(56px, 8vw, 96px)' }}>
+                  <div
+                    id="horizon-demo-pin"
+                    style={{
+                      position: 'sticky',
+                      top: 0,
+                      height: '100vh',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 'clamp(20px, 4vw, 48px)',
+                      boxSizing: 'border-box',
+                    }}
+                  >
+                    <div
+                      id="horizon-panel"
+                      className="demo-panel"
+                      style={{
+                        position: 'relative',
+                        width: '100%',
+                        maxWidth: '900px',
+                        background: '#fcfbf8',
+                        border: '1px solid #dcd7cc',
+                        borderRadius: 'var(--radius-lg)',
+                        boxShadow: '0 30px 80px rgba(0, 0, 0, 0.45)',
+                        padding: 'clamp(24px, 4vw, 48px)',
+                        boxSizing: 'border-box',
+                        color: '#191b19',
+                      }}
+                    >
+                      {/* header — mirrors horizon-calc.vercel.app's mark: a half-sun over a horizon rule */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                        <svg width="26" height="20" viewBox="0 0 26 20" aria-hidden="true" style={{ flexShrink: 0 }}>
+                          <line x1="1" y1="15" x2="25" y2="15" stroke="#191b19" strokeWidth="1.4" />
+                          <path d="M6,15 A7,7 0 0 1 20,15 Z" fill="#b23b1e" />
+                        </svg>
+                        <div>
+                          <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'var(--size-h3)', color: '#191b19' }}>
+                            {build.name}
+                          </p>
+                          <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'var(--size-small)', color: '#52564f' }}>
+                            {build.tagline}
+                          </p>
+                        </div>
+                      </div>
+
+                      <p style={{ margin: 'clamp(16px, 2.5vw, 24px) 0 0', maxWidth: '58ch', fontSize: 'var(--size-small)', lineHeight: 'var(--lh-body)', color: '#52564f' }}>
+                        {build.summary}
+                      </p>
+
+                      {/* the worked example — a real default state from the calculator */}
+                      <div style={{ marginTop: 'clamp(22px, 3.5vw, 34px)' }}>
+                        <span style={{ fontFamily: 'var(--font-ui)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#8a8477' }}>
+                          Monthly EMI
+                        </span>
+                        <p style={{ margin: '4px 0 0' }}>
+                          <span
+                            id="horizon-emi"
+                            data-target={demo.emi}
+                            style={{
+                              fontFamily: 'var(--font-display)',
+                              fontWeight: 400,
+                              fontSize: 'clamp(32px, 5vw, 56px)',
+                              lineHeight: 0.95,
+                              letterSpacing: '-0.02em',
+                              color: '#191b19',
+                            }}
+                          >
+                            {demo.emiLabel}
+                          </span>
+                        </p>
+                        <span style={{ fontFamily: 'var(--font-ui)', fontSize: '11.5px', color: '#52564f' }}>
+                          {demo.principalLabel} · {demo.rateLabel} · {demo.tenureLabel}
+                        </span>
+                      </div>
+
+                      {/* balance / interest chart, drawn on scroll */}
+                      <div style={{ marginTop: 'clamp(18px, 3vw, 28px)' }}>
+                        <svg
+                          viewBox="0 0 400 152"
+                          preserveAspectRatio="none"
+                          aria-hidden="true"
+                          style={{ display: 'block', width: '100%', height: 'clamp(120px, 18vw, 170px)', overflow: 'visible' }}
+                        >
+                          <line x1="0" y1="151" x2="400" y2="151" stroke="#dcd7cc" strokeWidth="1" />
+                          <path id="horizon-balance-path" d="M0,10 C220,18 300,70 400,152" fill="none" stroke="#191b19" strokeWidth="2" />
+                          <path
+                            id="horizon-interest-path"
+                            d="M0,152 C60,128 150,127 400,127"
+                            fill="none"
+                            stroke="#b23b1e"
+                            strokeWidth="1.6"
+                            strokeDasharray="5 4"
+                          />
+                          <circle id="horizon-dot" cx="0" cy="10" r="3.5" fill="#191b19" style={{ opacity: 0 }} />
+                        </svg>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            marginTop: '4px',
+                            fontFamily: 'var(--font-ui)',
+                            fontSize: '10px',
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            color: '#8a8477',
+                          }}
+                        >
+                          <span>0</span>
+                          <span>{demo.tenureLabel}</span>
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '18px', marginTop: '10px', fontSize: 'var(--size-small)', color: '#52564f' }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ width: '14px', height: '2px', background: '#191b19', display: 'inline-block' }} />
+                            Outstanding balance
+                          </span>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ width: '14px', height: '2px', background: '#b23b1e', display: 'inline-block' }} />
+                            Interest paid so far
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* principal / interest split */}
+                      <div style={{ marginTop: 'clamp(18px, 3vw, 28px)' }}>
+                        <div className="horizon-split-bar">
+                          <span id="horizon-split-black" data-target={demo.principalPct} style={{ width: `${demo.principalPct}%` }} />
+                          <span id="horizon-split-red" data-target={demo.interestPct} style={{ width: `${demo.interestPct}%` }} />
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontFamily: 'var(--font-ui)', fontSize: '10.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#52564f' }}>
+                          <span>Principal · {demo.principalPct}%</span>
+                          <span>Interest · {demo.interestPct}%</span>
+                        </div>
+                      </div>
+
+                      {/* stats + CTA — revealed once the demo finishes drawing */}
+                      <div className="demo-reveal" style={{ marginTop: 'clamp(22px, 3.5vw, 32px)' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 28px', paddingTop: 'clamp(16px, 2.5vw, 22px)', borderTop: '1px solid #dcd7cc' }}>
+                          {[
+                            ['Total interest', demo.totalInterestLabel],
+                            ['Total repayment', demo.totalRepaymentLabel],
+                            ['Effective tenure', demo.tenureLabel],
+                          ].map(([label, value]) => (
+                            <div key={label}>
+                              <p style={{ margin: 0, fontFamily: 'var(--font-ui)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#8a8477' }}>
+                                {label}
+                              </p>
+                              <p
+                                style={{
+                                  margin: '2px 0 0',
+                                  fontFamily: 'var(--font-display)',
+                                  fontWeight: 400,
+                                  fontSize: 'var(--size-h4)',
+                                  lineHeight: 0.95,
+                                  letterSpacing: '-0.02em',
+                                  color: '#191b19',
+                                }}
+                              >
+                                {value}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ marginTop: 'clamp(18px, 3vw, 26px)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '14px 20px' }}>
+                          <Button variant="dark" arrow href={build.url} target="_blank" rel="noopener noreferrer">
+                            Open the calculator
+                          </Button>
+                          {build.note && <span style={{ fontSize: 'var(--size-small)', color: '#52564f' }}>{build.note}</span>}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
 
           {/* EMI calculator — in development */}
           {builds
@@ -827,6 +1014,11 @@ export default function Home() {
                   vectorEffect="non-scaling-stroke"
                 />
               </svg>
+
+              {/* Phones: the horizontal wave above is hidden (see globals.css) and this
+                  single vertical line takes over, drawing top-to-bottom in sync with
+                  the same node pops — see useEraReveals. */}
+              <div className="era-timeline-line-mobile" aria-hidden="true" />
 
               {experience.map((item, idx) => (
                 <div key={idx} className={`era-timeline-item ${idx % 2 === 0 ? 'is-above' : 'is-below'}`}>

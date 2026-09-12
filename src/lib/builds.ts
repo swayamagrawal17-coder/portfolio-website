@@ -5,6 +5,20 @@ export interface LedgerEntry {
   readTime: string;
 }
 
+/** Numbers for a worked EMI example, used to drive the "loan pays itself down" demo. */
+export interface AmortizationDemo {
+  principalLabel: string;
+  rateLabel: string;
+  tenureLabel: string;
+  /** Animated by the demo's scroll hook. */
+  emi: number;
+  emiLabel: string;
+  totalInterestLabel: string;
+  totalRepaymentLabel: string;
+  principalPct: number;
+  interestPct: number;
+}
+
 export interface Build {
   id: string;
   name: string;
@@ -17,6 +31,8 @@ export interface Build {
   summary: string;
   /** Recent entries, used to drive the "ledger writes itself" scroll demo. */
   entries?: LedgerEntry[];
+  /** A worked example, used to drive the "loan pays itself down" scroll demo. */
+  demo?: AmortizationDemo;
   /** Small print shown next to the call-to-action. */
   note?: string;
 }
@@ -42,11 +58,27 @@ export const builds: Build[] = [
     ],
   },
   {
-    id: 'emi-calculator',
-    name: 'EMI Calculator',
-    tagline: 'Where every rupee of a loan payment goes.',
-    status: 'in-development',
+    id: 'horizon',
+    name: 'Horizon',
+    tagline: 'Money changes value over its horizon.',
+    status: 'live',
+    url: 'https://horizon-calc.vercel.app',
+    urlLabel: 'horizon-calc.vercel.app',
     summary:
-      'A loan calculator that shows where each instalment actually goes: how much is interest, how the balance falls, and what one early payment changes.',
+      'Three linked calculators for EMI, future value, and present value. Every result is a balance drawn over time, with the amortization schedule underneath and a link, CSV, or PDF to take it with you.',
+    note: 'Shareable result links. CSV and PDF export. No backend.',
+    // A real worked example from the calculator's own default state. Keep in
+    // sync if that default changes.
+    demo: {
+      principalLabel: '₹10,00,000',
+      rateLabel: '6.50% p.a.',
+      tenureLabel: '5 yr',
+      emi: 19566,
+      emiLabel: '₹19,566',
+      totalInterestLabel: '₹1,73,969',
+      totalRepaymentLabel: '₹11,73,969',
+      principalPct: 85.2,
+      interestPct: 14.8,
+    },
   },
 ];

@@ -83,38 +83,6 @@ export function useEraReveals() {
         });
       });
 
-      // The Experience timeline wave: draws itself left-to-right as you scroll the
-      // section, and each node pops the moment the drawing line reaches it.
-      const wavePath = document.querySelector<SVGPathElement>('.era-wave-path');
-      if (wavePath) {
-        const waveSection = wavePath.closest('section') || wavePath;
-        const len = wavePath.getTotalLength();
-        gsap.set(wavePath, { strokeDasharray: len, strokeDashoffset: len });
-        const nodes = gsap.utils.toArray<HTMLElement>('[data-era-node]');
-
-        const waveTl = gsap.timeline({
-          defaults: { ease: 'none', immediateRender: false },
-          scrollTrigger: {
-            trigger: waveSection,
-            start: 'top 72%',
-            end: 'bottom 78%',
-            scrub: 0.5,
-          },
-        });
-        waveTl.to(wavePath, { strokeDashoffset: 0, duration: 1 }, 0);
-        nodes.forEach((node, i) => {
-          // nodes sit at 10/30/50/70/90% along the line → pop at the matching
-          // point of the draw
-          const at = (i + 0.5) / Math.max(nodes.length, 1);
-          waveTl.fromTo(
-            node,
-            { scale: 0, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 0.07, ease: 'back.out(2.2)' },
-            at,
-          );
-        });
-      }
-
       // ERA arch reveal (Work): a navy dome sweeps up from the foot of the frame
       // to fill it, carrying the "Five projects" title. The "pinning" is a
       // position:sticky stage (see page.tsx) — NO ScrollTrigger pin — and GSAP
@@ -232,6 +200,75 @@ export function useEraReveals() {
           },
         }
       );
+      ScrollTrigger.refresh();
+    });
+
+    // Experience timeline wave — desktop/tablet: draws itself left-to-right as
+    // you scroll the section, and each node pops the moment the drawing line
+    // reaches it. Width-gated so it doesn't fight the phone version below for
+    // control of the same [data-era-node] dots.
+    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 901px)', () => {
+      const wavePath = document.querySelector<SVGPathElement>('.era-wave-path');
+      if (!wavePath) return;
+      const waveSection = wavePath.closest('section') || wavePath;
+      const len = wavePath.getTotalLength();
+      gsap.set(wavePath, { strokeDasharray: len, strokeDashoffset: len });
+      const nodes = gsap.utils.toArray<HTMLElement>('[data-era-node]');
+
+      const waveTl = gsap.timeline({
+        defaults: { ease: 'none', immediateRender: false },
+        scrollTrigger: {
+          trigger: waveSection,
+          start: 'top 72%',
+          end: 'bottom 78%',
+          scrub: 0.5,
+        },
+      });
+      waveTl.to(wavePath, { strokeDashoffset: 0, duration: 1 }, 0);
+      nodes.forEach((node, i) => {
+        // nodes sit at 10/30/50/70/90% along the line → pop at the matching
+        // point of the draw
+        const at = (i + 0.5) / Math.max(nodes.length, 1);
+        waveTl.fromTo(
+          node,
+          { scale: 0, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.07, ease: 'back.out(2.2)' },
+          at,
+        );
+      });
+      ScrollTrigger.refresh();
+    });
+
+    // Experience timeline "string" — phones: the stacked-card layout swaps the
+    // horizontal wave for a single vertical line running the length of the
+    // list. It now draws top-to-bottom as the list scrolls by (it used to be
+    // a plain always-visible CSS border), with the same nodes popping in step.
+    mm.add('(prefers-reduced-motion: no-preference) and (max-width: 900px)', () => {
+      const lineEl = document.querySelector<HTMLElement>('.era-timeline-line-mobile');
+      const timelineEl = document.querySelector<HTMLElement>('.era-timeline');
+      if (!lineEl || !timelineEl) return;
+      gsap.set(lineEl, { scaleY: 0 });
+      const nodes = gsap.utils.toArray<HTMLElement>('[data-era-node]');
+
+      const waveTl = gsap.timeline({
+        defaults: { ease: 'none', immediateRender: false },
+        scrollTrigger: {
+          trigger: timelineEl,
+          start: 'top 80%',
+          end: 'bottom 70%',
+          scrub: 0.5,
+        },
+      });
+      waveTl.to(lineEl, { scaleY: 1, duration: 1 }, 0);
+      nodes.forEach((node, i) => {
+        const at = (i + 0.5) / Math.max(nodes.length, 1);
+        waveTl.fromTo(
+          node,
+          { scale: 0, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.07, ease: 'back.out(2.2)' },
+          at,
+        );
+      });
       ScrollTrigger.refresh();
     });
 

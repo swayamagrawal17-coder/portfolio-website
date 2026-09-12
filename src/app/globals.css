@@ -217,6 +217,14 @@ a {
   top: calc(50% + 30px);
 }
 
+/* Phones: one continuous vertical line replaces the horizontal wave SVG,
+   drawn top-to-bottom by useEraReveals (gsap scaleY scrub, not CSS). Resting
+   state (no JS / reduced motion) is fully drawn — see the reduced-motion
+   block below. */
+.era-timeline-line-mobile {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .era-timeline {
     display: flex;
@@ -227,11 +235,21 @@ a {
   .era-timeline-line {
     display: none;
   }
+  .era-timeline-line-mobile {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--bougainvillea);
+    transform-origin: top;
+    transform: scaleY(1);
+  }
   .era-timeline-item {
     height: auto;
     display: block;
     padding-left: 26px;
-    border-left: 2px solid var(--bougainvillea);
   }
   .era-timeline-dot {
     position: absolute;
@@ -461,34 +479,14 @@ a {
     transform: scale(0.7);
     transform-origin: top left;
   }
-  /* Work section: edge-to-edge navy on phones (no cream gutter, no arch reveal) */
+  /* Work section: edge-to-edge on phones (no cream gutter either side of the
+     dome reveal). The section itself has no horizontal padding by design
+     (see page.tsx) — this only cancels the global `section` padding rule
+     above. The arch reveal (sticky stage + GSAP clip-path scrub) otherwise
+     runs unchanged, same as on desktop and same as the Certifications pin. */
   #work {
     padding-left: 0 !important;
     padding-right: 0 !important;
-    background: var(--ink) !important;
-  }
-  [data-era-arch-reveal] {
-    height: auto !important;
-    background: var(--ink) !important;
-  }
-  [data-era-arch-stage] {
-    position: static !important;
-    height: auto !important;
-    background: var(--ink) !important;
-  }
-  [data-era-arch-panel] {
-    clip-path: none !important;
-  }
-  [data-era-arch-inner] {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
-    position: relative !important;
-    padding-top: 12vh !important;
-    padding-bottom: 10vh !important;
-  }
-  [data-era-arch-label] {
-    display: none !important;
   }
 }
 
@@ -553,6 +551,29 @@ a {
 }
 
 /* ============================================================
+   Side projects — scroll demos share one "reveal at completion" pair:
+   any .demo-panel that gains .is-complete reveals its .demo-reveal
+   child (the stats + CTA). Used by both the Bahi Khaata ledger and
+   the Horizon chart below.
+   ============================================================ */
+.demo-reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+}
+.demo-panel.is-complete .demo-reveal {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+@media (max-width: 640px) {
+  .demo-panel {
+    max-width: 460px;
+  }
+}
+
+/* ============================================================
    Side projects — "the ledger writes itself" (Bahi Khaata demo)
    Same mechanism as the Certifications gallery: a CSS-sticky pin
    over a tall runway, with useBuildsLedger toggling .is-recorded
@@ -591,24 +612,9 @@ a {
   line-height: 1.25;
   color: var(--paper);
 }
-.builds-cta {
-  opacity: 0;
-  transform: translateY(8px);
-  pointer-events: none;
-  transition: opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
-}
-#builds-panel.is-complete .builds-cta {
-  opacity: 1;
-  transform: none;
-  pointer-events: auto;
-}
-
 @media (max-width: 640px) {
   #builds-ledger-pin {
     padding: 12px !important;
-  }
-  #builds-panel {
-    max-width: 460px;
   }
   .builds-cols {
     display: none !important;
@@ -648,12 +654,50 @@ a {
     transform: none !important;
     filter: none !important;
   }
-  .builds-cta {
-    opacity: 1 !important;
-    transform: none !important;
-    pointer-events: auto !important;
-  }
   #builds-count {
     display: none !important;
+  }
+}
+
+/* ============================================================
+   Side projects — "the loan pays itself down" (Horizon demo)
+   Same mechanism again: a CSS-sticky pin over a tall runway, with
+   useHorizonDemo drawing the SVG lines, moving the dot, counting
+   the EMI figure up, and filling the split bar as you scroll.
+   ============================================================ */
+.horizon-split-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #dcd7cc;
+}
+.horizon-split-bar > span:first-child {
+  background: #191b19;
+  height: 100%;
+}
+.horizon-split-bar > span:last-child {
+  background: #b23b1e;
+  height: 100%;
+}
+
+@media (max-width: 640px) {
+  #horizon-demo-pin {
+    padding: 12px !important;
+  }
+}
+
+/* Reduced motion: no pin; the chart renders fully drawn, the EMI figure and
+   split bar already show their final values from the JSX, so nothing else
+   needs to change here beyond releasing the pin. */
+@media (prefers-reduced-motion: reduce) {
+  #horizon-demo {
+    height: auto !important;
+  }
+  #horizon-demo-pin {
+    position: static !important;
+    height: auto !important;
+    display: block !important;
+    padding: clamp(20px, 5vw, 48px) !important;
   }
 }

@@ -49,12 +49,13 @@ export const builds: Build[] = [
       'A bilingual ledger of what I am learning about markets, money, and policy. Each entry is field research or a financial model, written while I work through it rather than after.',
     note: 'English, हिन्दी, and Hinglish. No cookies, no trackers.',
     // Static by design: the site exposes no feed. Keep in sync if it gains entries.
+    // Kept short (3, one per section) on purpose — a shorter panel means less
+    // pinned scroll distance on phones, which is also part of what fixes the
+    // Bahi Khaata/Horizon overlap below.
     entries: [
       { date: '15-03-2026', title: 'What 51 Street Vendors Taught Me About UPI', section: 'Research', readTime: '4 min' },
       { date: '05-10-2025', title: 'Why Ind AS Feels Harder for SMEs Than It Should', section: 'Policy', readTime: '3 min' },
       { date: '12-12-2024', title: 'What a Dividend Yield Does Not Tell You', section: 'Markets', readTime: '3 min' },
-      { date: '24-11-2024', title: 'When a TV Show Moves a Demand Curve', section: 'Markets', readTime: '2 min' },
-      { date: '28-10-2024', title: 'The Ozone Treaty Worked. Almost Nobody Knows.', section: 'Policy', readTime: '2 min' },
     ],
   },
   {

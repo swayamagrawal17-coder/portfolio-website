@@ -637,23 +637,29 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Bahi Khaata — the ledger writes itself as you scroll */}
-          {builds
-            .filter((b) => b.status === 'live' && b.entries?.length)
-            .slice(0, 1)
-            .map((build) => (
-              <div key={build.id} id="builds-ledger" style={{ position: 'relative', height: '300vh', marginTop: 'clamp(40px, 6vw, 72px)' }}>
+          {/* Bahi Khaata + Horizon share ONE pinned stage and crossfade between
+              each other, instead of two separate position:sticky elements
+              chained back to back. Two adjacent sticky pins is the pattern
+              that was overlapping on real iOS Safari/Chrome — their
+              stuck/release timing could drift out of sync as the address bar
+              animates, something desktop-emulated phone testing never
+              reproduces. One shared pin (the same pattern the Certifications
+              gallery already uses) removes that failure mode entirely. */}
+          {(() => {
+            const bahiKhaata = builds.find((b) => b.status === 'live' && b.entries?.length);
+            const horizon = builds.find((b) => b.status === 'live' && b.demo);
+            if (!bahiKhaata || !horizon) return null;
+            const horizonDemo = horizon.demo!;
+            return (
+              <div id="builds-demos" style={{ position: 'relative', height: '560vh', marginTop: 'clamp(40px, 6vw, 72px)' }}>
                 <div
-                  id="builds-ledger-pin"
+                  id="builds-demos-pin"
                   style={{
                     position: 'sticky',
                     top: 0,
-                    // dvh (not vh): iOS Safari/Chrome's address bar hides and
+                    // dvh, not vh: iOS Safari/Chrome's address bar hides and
                     // shows as you scroll, so 100vh (the largest possible
                     // viewport) is often taller than what's actually visible.
-                    // That mismatch is what let this pin and the next one
-                    // (Horizon) briefly overlap on real phones. dvh tracks
-                    // the real, current viewport instead.
                     height: '100dvh',
                     display: 'flex',
                     alignItems: 'center',
@@ -662,300 +668,281 @@ export default function Home() {
                     boxSizing: 'border-box',
                   }}
                 >
-                  <div
-                    id="builds-panel"
-                    className="demo-panel"
-                    style={{
-                      position: 'relative',
-                      width: '100%',
-                      maxWidth: '900px',
-                      background: '#141210',
-                      border: '1px solid var(--rule-on-dark)',
-                      borderRadius: 'var(--radius-lg)',
-                      boxShadow: '0 30px 80px rgba(0, 0, 0, 0.45)',
-                      padding: 'clamp(24px, 4vw, 48px)',
-                      boxSizing: 'border-box',
-                    }}
-                  >
-                    {/* header — mirrors bahi-khaata.vercel.app */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                      <svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true" style={{ flexShrink: 0 }}>
-                        <rect x="1" y="1" width="20" height="24" rx="1.5" fill="var(--accent-on-light)" />
-                        <line x1="6" y1="1" x2="6" y2="25" stroke="#141210" strokeWidth="1" />
-                        <line x1="10" y1="7" x2="17" y2="7" stroke="#141210" strokeWidth="1" />
-                        <line x1="10" y1="11" x2="17" y2="11" stroke="#141210" strokeWidth="1" />
-                      </svg>
-                      <div>
-                        <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'var(--size-h3)', color: 'var(--paper)' }}>
-                          {build.name}
-                        </p>
-                        <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'var(--size-small)', color: 'var(--paper-on-dark)' }}>
-                          {build.tagline}
-                        </p>
-                      </div>
-                    </div>
-
-                    <p style={{ margin: 'clamp(16px, 2.5vw, 24px) 0 0', maxWidth: '58ch', fontSize: 'var(--size-small)', lineHeight: 'var(--lh-body)', color: 'var(--paper-on-dark)' }}>
-                      {build.summary}
-                    </p>
-
-                    {/* column headers + rule that draws on scroll */}
-                    <div data-era-draw-trigger style={{ marginTop: 'clamp(20px, 3vw, 32px)' }}>
+                  <div className="builds-demos-stack" style={{ position: 'relative', display: 'grid', width: '100%', maxWidth: '900px' }}>
+                    {/* Bahi Khaata — the ledger writes itself as you scroll */}
+                    <div id="builds-panel-wrap" style={{ gridArea: '1 / 1', minWidth: 0 }}>
                       <div
-                        className="builds-cols"
+                        id="builds-panel"
+                        className="demo-panel"
                         style={{
-                          display: 'grid',
-                          gridTemplateColumns: '92px 1fr auto auto',
-                          gap: '18px',
-                          fontFamily: 'var(--font-ui)',
-                          fontSize: '10px',
-                          fontWeight: 600,
-                          letterSpacing: '0.14em',
-                          textTransform: 'uppercase',
-                          color: 'rgba(242, 239, 230, 0.45)',
+                          position: 'relative',
+                          width: '100%',
+                          background: '#141210',
+                          border: '1px solid var(--rule-on-dark)',
+                          borderRadius: 'var(--radius-lg)',
+                          boxShadow: '0 30px 80px rgba(0, 0, 0, 0.45)',
+                          padding: 'clamp(24px, 4vw, 48px)',
+                          boxSizing: 'border-box',
                         }}
                       >
-                        <span>Date</span>
-                        <span>Entry</span>
-                        <span>Section</span>
-                        <span>Length</span>
+                        {/* header — mirrors bahi-khaata.vercel.app */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                          <svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true" style={{ flexShrink: 0 }}>
+                            <rect x="1" y="1" width="20" height="24" rx="1.5" fill="var(--accent-on-light)" />
+                            <line x1="6" y1="1" x2="6" y2="25" stroke="#141210" strokeWidth="1" />
+                            <line x1="10" y1="7" x2="17" y2="7" stroke="#141210" strokeWidth="1" />
+                            <line x1="10" y1="11" x2="17" y2="11" stroke="#141210" strokeWidth="1" />
+                          </svg>
+                          <div>
+                            <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'var(--size-h3)', color: 'var(--paper)' }}>
+                              {bahiKhaata.name}
+                            </p>
+                            <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'var(--size-small)', color: 'var(--paper-on-dark)' }}>
+                              {bahiKhaata.tagline}
+                            </p>
+                          </div>
+                        </div>
+
+                        <p style={{ margin: 'clamp(16px, 2.5vw, 24px) 0 0', maxWidth: '58ch', fontSize: 'var(--size-small)', lineHeight: 'var(--lh-body)', color: 'var(--paper-on-dark)' }}>
+                          {bahiKhaata.summary}
+                        </p>
+
+                        {/* column headers + rule that draws on scroll */}
+                        <div data-era-draw-trigger style={{ marginTop: 'clamp(20px, 3vw, 32px)' }}>
+                          <div
+                            className="builds-cols"
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '92px 1fr auto auto',
+                              gap: '18px',
+                              fontFamily: 'var(--font-ui)',
+                              fontSize: '10px',
+                              fontWeight: 600,
+                              letterSpacing: '0.14em',
+                              textTransform: 'uppercase',
+                              color: 'rgba(242, 239, 230, 0.45)',
+                            }}
+                          >
+                            <span>Date</span>
+                            <span>Entry</span>
+                            <span>Section</span>
+                            <span>Length</span>
+                          </div>
+                          <svg
+                            viewBox="0 0 100 1"
+                            preserveAspectRatio="none"
+                            aria-hidden="true"
+                            style={{ display: 'block', width: '100%', height: '1px', marginTop: '10px', overflow: 'visible' }}
+                          >
+                            <path
+                              className="era-draw-path"
+                              d="M0,0.5 L100,0.5"
+                              fill="none"
+                              stroke="var(--rule-on-dark)"
+                              strokeWidth="1"
+                              vectorEffect="non-scaling-stroke"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* the rows */}
+                        <ol id="builds-rows" style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                          {bahiKhaata.entries!.map((entry, i) => (
+                            <li key={i} className="builds-row">
+                              <span className="builds-row-date">{entry.date}</span>
+                              <span className="builds-row-title">{entry.title}</span>
+                              <span className="builds-row-section">{entry.section}</span>
+                              <span className="builds-row-len">{entry.readTime}</span>
+                            </li>
+                          ))}
+                        </ol>
+
+                        {/* running count */}
+                        <div aria-hidden="true" style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginTop: 'clamp(18px, 3vw, 30px)' }}>
+                          <span id="builds-count" className="era-display" style={{ fontSize: 'clamp(34px, 5vw, 60px)', color: 'var(--paper)', opacity: 0.22 }}>
+                            00
+                          </span>
+                          <span style={{ fontFamily: 'var(--font-ui)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.14em', color: 'var(--paper-on-dark)' }}>
+                            / {String(bahiKhaata.entries!.length).padStart(2, '0')} ENTRIES RECORDED
+                          </span>
+                        </div>
+
+                        {/* CTA — revealed once every row is recorded */}
+                        <div className="demo-reveal" style={{ marginTop: 'clamp(20px, 3vw, 28px)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '14px 20px' }}>
+                          <Button variant="primary" arrow href={bahiKhaata.url} target="_blank" rel="noopener noreferrer">
+                            Read the ledger
+                          </Button>
+                          {bahiKhaata.note && (
+                            <span style={{ fontSize: 'var(--size-small)', color: 'var(--paper-on-dark)' }}>{bahiKhaata.note}</span>
+                          )}
+                        </div>
                       </div>
-                      <svg
-                        viewBox="0 0 100 1"
-                        preserveAspectRatio="none"
-                        aria-hidden="true"
-                        style={{ display: 'block', width: '100%', height: '1px', marginTop: '10px', overflow: 'visible' }}
+                    </div>
+
+                    {/* Horizon — the loan pays itself down as you scroll */}
+                    <div id="horizon-panel-wrap" style={{ gridArea: '1 / 1', minWidth: 0, opacity: 0, pointerEvents: 'none' }}>
+                      <div
+                        id="horizon-panel"
+                        className="demo-panel"
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          background: 'var(--horizon-paper)',
+                          border: '1px solid var(--horizon-rule)',
+                          borderRadius: 'var(--radius-lg)',
+                          boxShadow: '0 30px 80px rgba(0, 0, 0, 0.45)',
+                          padding: 'clamp(24px, 4vw, 48px)',
+                          boxSizing: 'border-box',
+                          color: 'var(--horizon-ink)',
+                        }}
                       >
-                        <path
-                          className="era-draw-path"
-                          d="M0,0.5 L100,0.5"
-                          fill="none"
-                          stroke="var(--rule-on-dark)"
-                          strokeWidth="1"
-                          vectorEffect="non-scaling-stroke"
-                        />
-                      </svg>
-                    </div>
+                        {/* header — mirrors horizon-calc.vercel.app's mark: a half-sun over a horizon rule */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                          <svg width="26" height="20" viewBox="0 0 26 20" aria-hidden="true" style={{ flexShrink: 0 }}>
+                            <line x1="1" y1="15" x2="25" y2="15" stroke="var(--horizon-ink)" strokeWidth="1.4" />
+                            <path d="M6,15 A7,7 0 0 1 20,15 Z" fill="var(--horizon-accent)" />
+                          </svg>
+                          <div>
+                            <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'var(--size-h3)', color: 'var(--horizon-ink)' }}>
+                              {horizon.name}
+                            </p>
+                            <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'var(--size-small)', color: 'var(--horizon-ink-2)' }}>
+                              {horizon.tagline}
+                            </p>
+                          </div>
+                        </div>
 
-                    {/* the rows */}
-                    <ol id="builds-rows" style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                      {build.entries!.map((entry, i) => (
-                        <li key={i} className="builds-row">
-                          <span className="builds-row-date">{entry.date}</span>
-                          <span className="builds-row-title">{entry.title}</span>
-                          <span className="builds-row-section">{entry.section}</span>
-                          <span className="builds-row-len">{entry.readTime}</span>
-                        </li>
-                      ))}
-                    </ol>
+                        <p style={{ margin: 'clamp(16px, 2.5vw, 24px) 0 0', maxWidth: '58ch', fontSize: 'var(--size-small)', lineHeight: 'var(--lh-body)', color: 'var(--horizon-ink-2)' }}>
+                          {horizon.summary}
+                        </p>
 
-                    {/* running count */}
-                    <div aria-hidden="true" style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginTop: 'clamp(18px, 3vw, 30px)' }}>
-                      <span id="builds-count" className="era-display" style={{ fontSize: 'clamp(34px, 5vw, 60px)', color: 'var(--paper)', opacity: 0.22 }}>
-                        00
-                      </span>
-                      <span style={{ fontFamily: 'var(--font-ui)', fontSize: '11px', fontWeight: 600, letterSpacing: '0.14em', color: 'var(--paper-on-dark)' }}>
-                        / {String(build.entries!.length).padStart(2, '0')} ENTRIES RECORDED
-                      </span>
-                    </div>
+                        {/* the worked example — a real default state from the calculator */}
+                        <div style={{ marginTop: 'clamp(22px, 3.5vw, 34px)' }}>
+                          <span style={{ fontFamily: 'var(--font-ui)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--horizon-label)' }}>
+                            Monthly EMI
+                          </span>
+                          <p style={{ margin: '4px 0 0' }}>
+                            <span
+                              id="horizon-emi"
+                              data-target={horizonDemo.emi}
+                              style={{
+                                fontFamily: 'var(--font-display)',
+                                fontWeight: 400,
+                                fontSize: 'clamp(32px, 5vw, 56px)',
+                                lineHeight: 0.95,
+                                letterSpacing: '-0.02em',
+                                color: 'var(--horizon-ink)',
+                              }}
+                            >
+                              {horizonDemo.emiLabel}
+                            </span>
+                          </p>
+                          <span style={{ fontFamily: 'var(--font-ui)', fontSize: '11.5px', color: 'var(--horizon-ink-2)' }}>
+                            {horizonDemo.principalLabel} · {horizonDemo.rateLabel} · {horizonDemo.tenureLabel}
+                          </span>
+                        </div>
 
-                    {/* CTA — revealed once every row is recorded */}
-                    <div className="demo-reveal" style={{ marginTop: 'clamp(20px, 3vw, 28px)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '14px 20px' }}>
-                      <Button variant="primary" arrow href={build.url} target="_blank" rel="noopener noreferrer">
-                        Read the ledger
-                      </Button>
-                      {build.note && (
-                        <span style={{ fontSize: 'var(--size-small)', color: 'var(--paper-on-dark)' }}>{build.note}</span>
-                      )}
+                        {/* balance / interest chart, drawn on scroll */}
+                        <div style={{ marginTop: 'clamp(18px, 3vw, 28px)' }}>
+                          <svg
+                            viewBox="0 0 400 152"
+                            preserveAspectRatio="none"
+                            aria-hidden="true"
+                            style={{ display: 'block', width: '100%', height: 'clamp(120px, 18vw, 170px)', overflow: 'visible' }}
+                          >
+                            <line x1="0" y1="151" x2="400" y2="151" stroke="var(--horizon-rule)" strokeWidth="1" />
+                            <path id="horizon-balance-path" d="M0,10 C220,18 300,70 400,152" fill="none" stroke="var(--horizon-ink)" strokeWidth="2" />
+                            <path
+                              id="horizon-interest-path"
+                              d="M0,152 C60,128 150,127 400,127"
+                              fill="none"
+                              stroke="var(--horizon-accent)"
+                              strokeWidth="1.6"
+                              strokeDasharray="5 4"
+                            />
+                            <circle id="horizon-dot" cx="0" cy="10" r="3.5" fill="var(--horizon-ink)" style={{ opacity: 0 }} />
+                          </svg>
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              marginTop: '4px',
+                              fontFamily: 'var(--font-ui)',
+                              fontSize: '10px',
+                              letterSpacing: '0.08em',
+                              textTransform: 'uppercase',
+                              color: 'var(--horizon-label)',
+                            }}
+                          >
+                            <span>0</span>
+                            <span>{horizonDemo.tenureLabel}</span>
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '18px', marginTop: '10px', fontSize: 'var(--size-small)', color: 'var(--horizon-ink-2)' }}>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                              <span style={{ width: '14px', height: '2px', background: 'var(--horizon-ink)', display: 'inline-block' }} />
+                              Outstanding balance
+                            </span>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                              <span style={{ width: '14px', height: '2px', background: 'var(--horizon-accent)', display: 'inline-block' }} />
+                              Interest paid so far
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* principal / interest split */}
+                        <div style={{ marginTop: 'clamp(18px, 3vw, 28px)' }}>
+                          <div className="horizon-split-bar">
+                            <span id="horizon-split-black" data-target={horizonDemo.principalPct} style={{ width: `${horizonDemo.principalPct}%` }} />
+                            <span id="horizon-split-red" data-target={horizonDemo.interestPct} style={{ width: `${horizonDemo.interestPct}%` }} />
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontFamily: 'var(--font-ui)', fontSize: '10.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--horizon-ink-2)' }}>
+                            <span>Principal · {horizonDemo.principalPct}%</span>
+                            <span>Interest · {horizonDemo.interestPct}%</span>
+                          </div>
+                        </div>
+
+                        {/* stats + CTA — revealed once the demo finishes drawing */}
+                        <div className="demo-reveal" style={{ marginTop: 'clamp(22px, 3.5vw, 32px)' }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 28px', paddingTop: 'clamp(16px, 2.5vw, 22px)', borderTop: '1px solid var(--horizon-rule)' }}>
+                            {[
+                              ['Total interest', horizonDemo.totalInterestLabel],
+                              ['Total repayment', horizonDemo.totalRepaymentLabel],
+                              ['Effective tenure', horizonDemo.tenureLabel],
+                            ].map(([label, value]) => (
+                              <div key={label}>
+                                <p style={{ margin: 0, fontFamily: 'var(--font-ui)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--horizon-label)' }}>
+                                  {label}
+                                </p>
+                                <p
+                                  style={{
+                                    margin: '2px 0 0',
+                                    fontFamily: 'var(--font-display)',
+                                    fontWeight: 400,
+                                    fontSize: 'var(--size-h4)',
+                                    lineHeight: 0.95,
+                                    letterSpacing: '-0.02em',
+                                    color: 'var(--horizon-ink)',
+                                  }}
+                                >
+                                  {value}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                          <div style={{ marginTop: 'clamp(18px, 3vw, 26px)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '14px 20px' }}>
+                            <Button variant="dark" arrow href={horizon.url} target="_blank" rel="noopener noreferrer">
+                              Open the calculator
+                            </Button>
+                            {horizon.note && <span style={{ fontSize: 'var(--size-small)', color: 'var(--horizon-ink-2)' }}>{horizon.note}</span>}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
-
-          {/* Horizon — the loan pays itself down as you scroll */}
-          {builds
-            .filter((b) => b.status === 'live' && b.demo)
-            .map((build) => {
-              const demo = build.demo!;
-              return (
-                <div key={build.id} id="horizon-demo" style={{ position: 'relative', height: '260vh', marginTop: 'clamp(56px, 8vw, 96px)' }}>
-                  <div
-                    id="horizon-demo-pin"
-                    style={{
-                      position: 'sticky',
-                      top: 0,
-                      // dvh, not vh — see the matching comment on
-                      // #builds-ledger-pin above.
-                      height: '100dvh',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: 'clamp(20px, 4vw, 48px)',
-                      boxSizing: 'border-box',
-                    }}
-                  >
-                    <div
-                      id="horizon-panel"
-                      className="demo-panel"
-                      style={{
-                        position: 'relative',
-                        width: '100%',
-                        maxWidth: '900px',
-                        background: 'var(--horizon-paper)',
-                        border: '1px solid var(--horizon-rule)',
-                        borderRadius: 'var(--radius-lg)',
-                        boxShadow: '0 30px 80px rgba(0, 0, 0, 0.45)',
-                        padding: 'clamp(24px, 4vw, 48px)',
-                        boxSizing: 'border-box',
-                        color: 'var(--horizon-ink)',
-                      }}
-                    >
-                      {/* header — mirrors horizon-calc.vercel.app's mark: a half-sun over a horizon rule */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                        <svg width="26" height="20" viewBox="0 0 26 20" aria-hidden="true" style={{ flexShrink: 0 }}>
-                          <line x1="1" y1="15" x2="25" y2="15" stroke="var(--horizon-ink)" strokeWidth="1.4" />
-                          <path d="M6,15 A7,7 0 0 1 20,15 Z" fill="var(--horizon-accent)" />
-                        </svg>
-                        <div>
-                          <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'var(--size-h3)', color: 'var(--horizon-ink)' }}>
-                            {build.name}
-                          </p>
-                          <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'var(--size-small)', color: 'var(--horizon-ink-2)' }}>
-                            {build.tagline}
-                          </p>
-                        </div>
-                      </div>
-
-                      <p style={{ margin: 'clamp(16px, 2.5vw, 24px) 0 0', maxWidth: '58ch', fontSize: 'var(--size-small)', lineHeight: 'var(--lh-body)', color: 'var(--horizon-ink-2)' }}>
-                        {build.summary}
-                      </p>
-
-                      {/* the worked example — a real default state from the calculator */}
-                      <div style={{ marginTop: 'clamp(22px, 3.5vw, 34px)' }}>
-                        <span style={{ fontFamily: 'var(--font-ui)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--horizon-label)' }}>
-                          Monthly EMI
-                        </span>
-                        <p style={{ margin: '4px 0 0' }}>
-                          <span
-                            id="horizon-emi"
-                            data-target={demo.emi}
-                            style={{
-                              fontFamily: 'var(--font-display)',
-                              fontWeight: 400,
-                              fontSize: 'clamp(32px, 5vw, 56px)',
-                              lineHeight: 0.95,
-                              letterSpacing: '-0.02em',
-                              color: 'var(--horizon-ink)',
-                            }}
-                          >
-                            {demo.emiLabel}
-                          </span>
-                        </p>
-                        <span style={{ fontFamily: 'var(--font-ui)', fontSize: '11.5px', color: 'var(--horizon-ink-2)' }}>
-                          {demo.principalLabel} · {demo.rateLabel} · {demo.tenureLabel}
-                        </span>
-                      </div>
-
-                      {/* balance / interest chart, drawn on scroll */}
-                      <div style={{ marginTop: 'clamp(18px, 3vw, 28px)' }}>
-                        <svg
-                          viewBox="0 0 400 152"
-                          preserveAspectRatio="none"
-                          aria-hidden="true"
-                          style={{ display: 'block', width: '100%', height: 'clamp(120px, 18vw, 170px)', overflow: 'visible' }}
-                        >
-                          <line x1="0" y1="151" x2="400" y2="151" stroke="var(--horizon-rule)" strokeWidth="1" />
-                          <path id="horizon-balance-path" d="M0,10 C220,18 300,70 400,152" fill="none" stroke="var(--horizon-ink)" strokeWidth="2" />
-                          <path
-                            id="horizon-interest-path"
-                            d="M0,152 C60,128 150,127 400,127"
-                            fill="none"
-                            stroke="var(--horizon-accent)"
-                            strokeWidth="1.6"
-                            strokeDasharray="5 4"
-                          />
-                          <circle id="horizon-dot" cx="0" cy="10" r="3.5" fill="var(--horizon-ink)" style={{ opacity: 0 }} />
-                        </svg>
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            marginTop: '4px',
-                            fontFamily: 'var(--font-ui)',
-                            fontSize: '10px',
-                            letterSpacing: '0.08em',
-                            textTransform: 'uppercase',
-                            color: 'var(--horizon-label)',
-                          }}
-                        >
-                          <span>0</span>
-                          <span>{demo.tenureLabel}</span>
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '18px', marginTop: '10px', fontSize: 'var(--size-small)', color: 'var(--horizon-ink-2)' }}>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ width: '14px', height: '2px', background: 'var(--horizon-ink)', display: 'inline-block' }} />
-                            Outstanding balance
-                          </span>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ width: '14px', height: '2px', background: 'var(--horizon-accent)', display: 'inline-block' }} />
-                            Interest paid so far
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* principal / interest split */}
-                      <div style={{ marginTop: 'clamp(18px, 3vw, 28px)' }}>
-                        <div className="horizon-split-bar">
-                          <span id="horizon-split-black" data-target={demo.principalPct} style={{ width: `${demo.principalPct}%` }} />
-                          <span id="horizon-split-red" data-target={demo.interestPct} style={{ width: `${demo.interestPct}%` }} />
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontFamily: 'var(--font-ui)', fontSize: '10.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--horizon-ink-2)' }}>
-                          <span>Principal · {demo.principalPct}%</span>
-                          <span>Interest · {demo.interestPct}%</span>
-                        </div>
-                      </div>
-
-                      {/* stats + CTA — revealed once the demo finishes drawing */}
-                      <div className="demo-reveal" style={{ marginTop: 'clamp(22px, 3.5vw, 32px)' }}>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 28px', paddingTop: 'clamp(16px, 2.5vw, 22px)', borderTop: '1px solid var(--horizon-rule)' }}>
-                          {[
-                            ['Total interest', demo.totalInterestLabel],
-                            ['Total repayment', demo.totalRepaymentLabel],
-                            ['Effective tenure', demo.tenureLabel],
-                          ].map(([label, value]) => (
-                            <div key={label}>
-                              <p style={{ margin: 0, fontFamily: 'var(--font-ui)', fontSize: '9.5px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--horizon-label)' }}>
-                                {label}
-                              </p>
-                              <p
-                                style={{
-                                  margin: '2px 0 0',
-                                  fontFamily: 'var(--font-display)',
-                                  fontWeight: 400,
-                                  fontSize: 'var(--size-h4)',
-                                  lineHeight: 0.95,
-                                  letterSpacing: '-0.02em',
-                                  color: 'var(--horizon-ink)',
-                                }}
-                              >
-                                {value}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                        <div style={{ marginTop: 'clamp(18px, 3vw, 26px)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '14px 20px' }}>
-                          <Button variant="dark" arrow href={build.url} target="_blank" rel="noopener noreferrer">
-                            Open the calculator
-                          </Button>
-                          {build.note && <span style={{ fontSize: 'var(--size-small)', color: 'var(--horizon-ink-2)' }}>{build.note}</span>}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            );
+          })()}
 
           {/* EMI calculator — in development */}
           {builds

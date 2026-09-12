@@ -632,7 +632,7 @@ a {
   color: var(--paper);
 }
 @media (max-width: 640px) {
-  #builds-ledger-pin {
+  #builds-demos-pin {
     padding: 12px !important;
   }
   .builds-cols {
@@ -657,16 +657,29 @@ a {
   }
 }
 
-/* Reduced motion: no pin, every entry shown as a static readable ledger */
+/* Reduced motion: no pin, no crossfade — Bahi Khaata and Horizon stack as two
+   separate, fully readable static cards instead of sharing one stage. */
 @media (prefers-reduced-motion: reduce) {
-  #builds-ledger {
+  #builds-demos {
     height: auto !important;
   }
-  #builds-ledger-pin {
+  #builds-demos-pin {
     position: static !important;
     height: auto !important;
     display: block !important;
     padding: clamp(20px, 5vw, 48px) !important;
+  }
+  .builds-demos-stack {
+    display: block !important;
+  }
+  #builds-panel-wrap,
+  #horizon-panel-wrap {
+    position: static !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  #horizon-panel-wrap {
+    margin-top: clamp(24px, 4vw, 40px);
   }
   .builds-row {
     opacity: 1 !important;
@@ -680,9 +693,9 @@ a {
 
 /* ============================================================
    Side projects — "the loan pays itself down" (Horizon demo)
-   Same mechanism again: a CSS-sticky pin over a tall runway, with
-   useHorizonDemo drawing the SVG lines, moving the dot, counting
-   the EMI figure up, and filling the split bar as you scroll.
+   Shares #builds-demos-pin above with Bahi Khaata; useHorizonDemo draws the
+   SVG lines, moves the dot, counts the EMI figure up, and fills the split
+   bar as you scroll through this demo's half of the shared stage.
    ============================================================ */
 .horizon-split-bar {
   display: flex;
@@ -698,34 +711,4 @@ a {
 .horizon-split-bar > span:last-child {
   background: var(--horizon-accent);
   height: 100%;
-}
-
-@media (max-width: 640px) {
-  #horizon-demo-pin {
-    padding: 12px !important;
-  }
-  /* Phones drift a lot between a sticky element's CSS `vh` math and the
-     actual visible area (the address bar collapsing/expanding mid-scroll),
-     enough that this pin could still read as "stuck" for a beat after the
-     Bahi Khaata ledger's pin above it releases, and the two would paint on
-     top of each other. A generous plain gap (well past any realistic drift)
-     guarantees the first one is fully released before this one can engage. */
-  #horizon-demo {
-    margin-top: 22vh !important;
-  }
-}
-
-/* Reduced motion: no pin; the chart renders fully drawn, the EMI figure and
-   split bar already show their final values from the JSX, so nothing else
-   needs to change here beyond releasing the pin. */
-@media (prefers-reduced-motion: reduce) {
-  #horizon-demo {
-    height: auto !important;
-  }
-  #horizon-demo-pin {
-    position: static !important;
-    height: auto !important;
-    display: block !important;
-    padding: clamp(20px, 5vw, 48px) !important;
-  }
 }

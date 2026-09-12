@@ -1,5 +1,12 @@
 import { useEffect } from 'react';
 
+// Bahi Khaata and Horizon share one pinned stage (#builds-demos) and take
+// the first/second half of its scroll range, crossfading between them in a
+// narrow band in the middle. See useHorizonDemo.ts for the other half —
+// the two files intentionally use the same constants.
+const PHASE_SPLIT = 0.5;
+const FADE_HALF_WIDTH = 0.04; // crossfade runs from PHASE_SPLIT ± this
+
 /**
  * Drives the "the ledger writes itself" demo in the Side projects section.
  *
@@ -13,7 +20,8 @@ import { useEffect } from 'react';
  */
 export function useBuildsLedger() {
   useEffect(() => {
-    const outer = document.getElementById('builds-ledger');
+    const outer = document.getElementById('builds-demos');
+    const wrap = document.getElementById('builds-panel-wrap');
     const rowsWrap = document.getElementById('builds-rows');
     const rows = rowsWrap ? Array.from(rowsWrap.children) : [];
     const countEl = document.getElementById('builds-count');
@@ -47,11 +55,24 @@ export function useBuildsLedger() {
         return;
       }
 
-      let progress = -rect.top / scrollable;
-      progress = Math.max(0, Math.min(1, progress));
+      let overall = -rect.top / scrollable;
+      overall = Math.max(0, Math.min(1, overall));
+
+      // This demo owns the first half of the shared stage.
+      const local = Math.max(0, Math.min(1, overall / PHASE_SPLIT));
       // A slight over-count so the first row records almost immediately and the
       // last one settles a touch before the pin releases.
-      render(Math.round(progress * (rows.length + 0.5)));
+      render(Math.round(local * (rows.length + 0.5)));
+
+      if (wrap) {
+        const fadeStart = PHASE_SPLIT - FADE_HALF_WIDTH;
+        const fadeEnd = PHASE_SPLIT + FADE_HALF_WIDTH;
+        let opacity = 1;
+        if (overall >= fadeEnd) opacity = 0;
+        else if (overall > fadeStart) opacity = 1 - (overall - fadeStart) / (fadeEnd - fadeStart);
+        wrap.style.opacity = String(opacity);
+        wrap.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+      }
     };
 
     render(0);

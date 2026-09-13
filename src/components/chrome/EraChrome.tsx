@@ -424,11 +424,11 @@ export function EraChrome({ sections }: EraChromeProps) {
                 background: 'none',
                 border: 'none',
                 borderBottom: '1px solid var(--rule-on-dark)',
-                padding: '16px 0',
+                padding: '11px 0',
                 textAlign: 'left',
                 cursor: 'pointer',
                 fontFamily: 'var(--font-serif)',
-                fontSize: 'clamp(24px, 7vw, 34px)',
+                fontSize: 'clamp(17px, 5vw, 21px)',
                 fontWeight: 700,
                 color: i === active ? 'var(--accent-on-dark)' : 'var(--paper)',
               }}

@@ -46,8 +46,8 @@ export const builds: Build[] = [
     url: 'https://bahi-khaata.vercel.app',
     urlLabel: 'bahi-khaata.vercel.app',
     summary:
-      'A bilingual ledger of what I am learning about markets, money, and policy. Each entry is field research or a financial model, written while I work through it rather than after.',
-    note: 'English, हिन्दी, and Hinglish. No cookies, no trackers.',
+      'A ledger of what I am learning about markets, money, and policy. Each entry is field research or a financial model, written while I work through it rather than after.',
+    note: 'No cookies, no trackers.',
     // Static by design: the site exposes no feed. Keep in sync if it gains entries.
     // Kept short (3, one per section) on purpose — a shorter panel means less
     // pinned scroll distance on phones, which is also part of what fixes the

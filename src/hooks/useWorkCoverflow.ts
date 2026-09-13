@@ -142,6 +142,35 @@ export function useWorkCoverflow() {
     stage.addEventListener('focusin', onPointerPause);
     stage.addEventListener('focusout', onPointerResume);
 
+    // Touch swipe: horizontal drags move to the next/previous card, same as
+    // the arrow buttons. Vertical drags are left alone so the page still
+    // scrolls normally.
+    const SWIPE_THRESHOLD = 40;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchActive = false;
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchActive = true;
+      stopTimer();
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!touchActive) return;
+      touchActive = false;
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      if (Math.abs(deltaX) > SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX < 0) next();
+        else prev();
+      }
+      if (expandedIdx === null) startTimer();
+    };
+    stage.addEventListener('touchstart', onTouchStart, { passive: true });
+    stage.addEventListener('touchend', onTouchEnd);
+
     if (prevBtn) prevBtn.addEventListener('click', prev);
     if (nextBtn) nextBtn.addEventListener('click', next);
 
@@ -210,6 +239,8 @@ export function useWorkCoverflow() {
       stage.removeEventListener('mouseleave', onPointerResume);
       stage.removeEventListener('focusin', onPointerPause);
       stage.removeEventListener('focusout', onPointerResume);
+      stage.removeEventListener('touchstart', onTouchStart);
+      stage.removeEventListener('touchend', onTouchEnd);
       if (prevBtn) prevBtn.removeEventListener('click', prev);
       if (nextBtn) nextBtn.removeEventListener('click', next);
       if (toggleBtn) toggleBtn.removeEventListener('click', onToggle);

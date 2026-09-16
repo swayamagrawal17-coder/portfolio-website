@@ -10,22 +10,28 @@ export interface ChromeSection {
   id: string;
   label: string;
   tone: 'light' | 'dark';
+  /** Included in the desktop corner nav (a deliberately short list). Every
+   * section always appears in the mobile sheet's full sitemap regardless. */
+  primary?: boolean;
+  /** Position within the corner nav, since its curated order (Work first)
+   * deliberately differs from page/section order (About first). Required
+   * when `primary` is set. */
+  navOrder?: number;
+  /** Shorter label for the corner nav when `label` is too long for it
+   * (e.g. mobile's "Selected work" becomes desktop's "Work"). Falls back
+   * to `label` when omitted. */
+  navLabel?: string;
 }
 
 interface EraChromeProps {
   sections: ChromeSection[];
 }
 
-const NAV: { label: string; target: string }[] = [
-  { label: 'Work', target: 'work' },
-  { label: 'Projects', target: 'builds' },
-  { label: 'About', target: 'about' },
-  { label: 'Certifications', target: 'certifications' },
-  { label: 'Toolkit', target: 'toolkit' },
-  { label: 'Contact', target: 'contact' },
-];
-
 export function EraChrome({ sections }: EraChromeProps) {
+  const NAV = sections
+    .filter((s) => s.primary)
+    .sort((a, b) => (a.navOrder ?? 0) - (b.navOrder ?? 0))
+    .map((s) => ({ label: s.navLabel ?? s.label, target: s.id }));
   const [active, setActive] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const observerTargets = useRef<HTMLElement[]>([]);

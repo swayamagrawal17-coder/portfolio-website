@@ -24,13 +24,13 @@ import { CONTACT_EMAIL, LINKEDIN_URL } from '@/lib/site';
 const CHROME_SECTIONS: ChromeSection[] = [
   { id: 'hero', label: 'Intro', tone: 'light' },
   { id: 'proof', label: 'By the numbers', tone: 'dark' },
-  { id: 'about', label: 'About', tone: 'light' },
-  { id: 'work', label: 'Selected work', tone: 'dark' },
-  { id: 'builds', label: 'Side projects', tone: 'dark' },
+  { id: 'about', label: 'About', tone: 'light', primary: true, navOrder: 3 },
+  { id: 'work', label: 'Selected work', tone: 'dark', primary: true, navOrder: 1, navLabel: 'Work' },
+  { id: 'builds', label: 'Side projects', tone: 'dark', primary: true, navOrder: 2, navLabel: 'Projects' },
   { id: 'experience', label: 'Track record', tone: 'light' },
-  { id: 'certifications', label: 'Certifications', tone: 'dark' },
-  { id: 'toolkit', label: 'Toolkit', tone: 'dark' },
-  { id: 'contact', label: 'Contact', tone: 'light' },
+  { id: 'certifications', label: 'Certifications', tone: 'dark', primary: true, navOrder: 4 },
+  { id: 'toolkit', label: 'Toolkit', tone: 'dark', primary: true, navOrder: 5 },
+  { id: 'contact', label: 'Contact', tone: 'light', primary: true, navOrder: 6 },
 ];
 
 const BAND_X = 'clamp(28px, 6vw, 96px)';
@@ -913,8 +913,8 @@ export default function Home() {
                           <span id="horizon-split-red" data-target={demo.interestPct} style={{ width: `${demo.interestPct}%` }} />
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', fontFamily: 'var(--font-ui)', fontSize: '10.5px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--horizon-ink-2)' }}>
-                          <span>Principal · {demo.principalPct}%</span>
-                          <span>Interest · {demo.interestPct}%</span>
+                          <span>Principal · <span id="horizon-split-black-pct">{demo.principalPct}</span>%</span>
+                          <span>Interest · <span id="horizon-split-red-pct">{demo.interestPct}</span>%</span>
                         </div>
                       </div>
 
@@ -1173,7 +1173,7 @@ export default function Home() {
                           transition: 'opacity 600ms var(--ease-out),transform 600ms var(--ease-out)',
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div className="cert-tile-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                           <span style={{ fontSize: '10.5px', letterSpacing: '.14em', textTransform: 'uppercase', color: 'rgba(247,240,223,.65)' }}>
                             {cert.provider}
                           </span>

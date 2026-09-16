@@ -324,6 +324,21 @@ a {
 }
 
 /* ============================================================
+   Certifications gallery — clear the fixed corner nav
+   ============================================================ */
+@media (min-width: 641px) {
+  /* The corner nav's column width is set by its longest label
+     ("Certifications", ~117px) plus its own 26px right offset. The cert
+     tile's pagination numeral sits at the same top-right corner of the
+     viewport once the gallery is pinned, so without this reserve the two
+     collide by a couple of pixels at some viewport widths (confirmed at
+     1024px). 160px clears the nav's footprint with a comfortable margin. */
+  .cert-tile-header {
+    padding-right: 160px;
+  }
+}
+
+/* ============================================================
    About portrait
    ============================================================ */
 @media (max-width: 1024px) and (min-width: 641px) {
@@ -506,6 +521,13 @@ a {
   #work {
     padding-left: 0 !important;
     padding-right: 0 !important;
+  }
+  /* The rotating mark stays fixed top-left at 0.7 scale (24-96.8px on both
+     axes) while the coverflow's centered card drifts through that same
+     screen corner as the page scrolls — without this inset, a card's
+     category label sits directly under the mark's ring text. */
+  .coverflow-content {
+    padding-left: 64px !important;
   }
 }
 

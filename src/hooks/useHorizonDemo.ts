@@ -33,6 +33,8 @@ export function useHorizonDemo() {
     const emiEl = document.getElementById('horizon-emi');
     const blackBar = document.getElementById('horizon-split-black');
     const redBar = document.getElementById('horizon-split-red');
+    const blackPct = document.getElementById('horizon-split-black-pct');
+    const redPct = document.getElementById('horizon-split-red-pct');
 
     if (!outer || !balancePath || !interestPath) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -63,6 +65,10 @@ export function useHorizonDemo() {
       if (emiEl) emiEl.textContent = `₹${formatINR(emiTarget * draw)}`;
       if (blackBar) blackBar.style.width = `${principalPct * draw}%`;
       if (redBar) redBar.style.width = `${interestPct * draw}%`;
+      // toFixed(1), not Math.round: the JSX fallback prints one decimal
+      // (85.2%, 14.8%) and the drawn-in value should match that precision.
+      if (blackPct) blackPct.textContent = (principalPct * draw).toFixed(1);
+      if (redPct) redPct.textContent = (interestPct * draw).toFixed(1);
 
       if (panel) panel.classList.toggle('is-complete', progress >= 0.92);
     };

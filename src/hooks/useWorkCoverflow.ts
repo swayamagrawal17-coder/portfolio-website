@@ -84,6 +84,7 @@ export function useWorkCoverflow() {
       }
 
       ctaBtns.forEach((btn, idx) => {
+        btn.setAttribute('aria-expanded', String(expandedIdx === idx));
         if (expandedIdx === idx) {
           btn.textContent = 'Close';
           btn.style.background = 'var(--paper)';

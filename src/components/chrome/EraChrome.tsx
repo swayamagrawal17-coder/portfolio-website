@@ -403,6 +403,7 @@ export function EraChrome({ sections }: EraChromeProps) {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
+            overflowY: 'auto',
             gap: '4px',
             padding: 'clamp(28px, 9vw, 56px)',
           }}

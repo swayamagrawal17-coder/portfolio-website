@@ -530,6 +530,22 @@ a {
     padding-left: 64px !important;
   }
 }
+/* A landscape phone reports a width well past 640px (e.g. 812px), so the
+   width-only query above never fires and it's left with the mouse-tuned
+   corner nav: 15px-tall links on a 7px pitch, no hamburger fallback. Width
+   alone doesn't tell you the input method — a short viewport combined with
+   a coarse pointer reliably does mean "phone, sideways", so collapse to the
+   same mobile chrome there regardless of width. */
+@media (pointer: coarse) and (max-height: 500px) and (min-width: 641px) {
+  .era-section-counter,
+  .era-scroll-rail,
+  .era-corner-cta {
+    display: none !important;
+  }
+  .era-mobile-nav-toggle {
+    display: flex !important;
+  }
+}
 
 /* ============================================================
    Reduced motion

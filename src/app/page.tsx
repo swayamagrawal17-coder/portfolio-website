@@ -393,7 +393,7 @@ export default function Home() {
           {/* The coverflow, in normal flow on the same navy field */}
           <div style={{ position: 'relative', background: 'var(--ink)', color: 'var(--paper)', padding: `clamp(16px, 3vw, 40px) ${BAND_X} clamp(90px, 12vw, 140px)` }}>
             <div style={{ position: 'relative', maxWidth: 'var(--content-max)', margin: '0 auto' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap', paddingBottom: 'clamp(24px, 4vw, 40px)' }}>
+              <div style={{ position: 'relative', zIndex: 61, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap', paddingBottom: 'clamp(24px, 4vw, 40px)' }}>
                 <span className="era-eyebrow" style={{ color: 'var(--paper-on-dark)' }}>
                   The work
                 </span>
@@ -551,14 +551,14 @@ export default function Home() {
                 ))}
               </div>
 
-              <div role="group" aria-label="Project carousel controls" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px 18px', marginTop: '24px', flexWrap: 'wrap' }}>
+              <div role="group" aria-label="Project carousel controls" style={{ position: 'relative', zIndex: 61, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px 18px', marginTop: '24px', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', flexWrap: 'nowrap', alignItems: 'center', justifyContent: 'center', gap: 'clamp(8px, 3vw, 18px)' }}>
                   <button type="button" id="coverflow-prev" aria-label="Previous project" style={{ flexShrink: 0, width: '44px', height: '44px', borderRadius: 'var(--radius-stamp)', border: '1px solid var(--border-hairline-inverse)', background: 'transparent', color: 'var(--paper)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', boxShadow: '0 10px 26px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(242, 239, 230, 0.08)' }}>
                     &lt;
                   </button>
                   <div role="tablist" aria-label="Choose a project" style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
                     {projects.map((project, i) => (
-                      <button key={i} type="button" className="coverflow-dot" role="tab" aria-label={`Project ${i + 1}: ${project.title}`} aria-selected={i === 0} style={{ height: '32px', width: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}>
+                      <button key={i} type="button" className="coverflow-dot" role="tab" aria-label={`Project ${i + 1}: ${project.title}`} aria-selected={i === 0} style={{ height: '44px', width: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', padding: 0, cursor: 'pointer' }}>
                         <span style={{ display: 'block', flexShrink: 0, height: '8px', width: '8px', borderRadius: 'var(--radius-pill)', background: 'var(--rule-on-dark)', transition: 'all 300ms cubic-bezier(.25,1,.5,1)' }} />
                       </button>
                     ))}

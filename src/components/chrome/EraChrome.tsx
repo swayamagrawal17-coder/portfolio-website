@@ -34,6 +34,7 @@ export function EraChrome({ sections }: EraChromeProps) {
     .map((s) => ({ label: s.navLabel ?? s.label, target: s.id }));
   const [active, setActive] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sheetMounted, setSheetMounted] = useState(false);
   const observerTargets = useRef<HTMLElement[]>([]);
   const markRef = useRef<SVGSVGElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -125,14 +126,32 @@ export function EraChrome({ sections }: EraChromeProps) {
     };
     document.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    firstMenuLinkRef.current?.focus();
+    // Scroll-lock and focus are held back until the reveal is under way so
+    // the layout work doesn't land on the first animation frames.
+    const lockTimer = window.setTimeout(() => {
+      document.body.style.overflow = 'hidden';
+    }, 1000);
+    const focusTimer = window.setTimeout(() => {
+      firstMenuLinkRef.current?.focus({ preventScroll: true });
+    }, 800);
     const toggle = menuButtonRef.current;
     return () => {
       document.removeEventListener('keydown', onKey);
+      window.clearTimeout(lockTimer);
+      window.clearTimeout(focusTimer);
       document.body.style.overflow = prevOverflow;
-      toggle?.focus();
+      toggle?.focus({ preventScroll: true });
     };
+  }, [menuOpen]);
+
+  // Keep the sheet mounted long enough for its closing animation to finish.
+  useEffect(() => {
+    if (menuOpen) {
+      setSheetMounted(true);
+      return;
+    }
+    const t = window.setTimeout(() => setSheetMounted(false), 700);
+    return () => window.clearTimeout(t);
   }, [menuOpen]);
 
   const dark = sections[active]?.tone === 'dark';
@@ -167,6 +186,7 @@ export function EraChrome({ sections }: EraChromeProps) {
           width: '104px',
           height: '104px',
           pointerEvents: 'none',
+          visibility: sheetMounted ? 'hidden' : 'visible',
           mixBlendMode: dark ? 'normal' : 'multiply',
         }}
       >
@@ -374,31 +394,48 @@ export function EraChrome({ sections }: EraChromeProps) {
         }}
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-          {menuOpen ? (
-            <>
-              <path d="M4 4l10 10M14 4L4 14" />
-            </>
-          ) : (
-            <>
-              <path d="M2 5h14M2 9h14M2 13h14" />
-            </>
-          )}
+          <line
+            x1="2" y1="5" x2="16" y2="5"
+            style={{
+              transformOrigin: '9px 5px',
+              transform: menuOpen ? 'translateY(4px) rotate(45deg)' : 'none',
+              transition: 'transform 520ms cubic-bezier(.22,1,.36,1)',
+            }}
+          />
+          <line
+            x1="2" y1="9" x2="16" y2="9"
+            style={{
+              transformOrigin: '9px 9px',
+              transform: menuOpen ? 'scaleX(0)' : 'none',
+              opacity: menuOpen ? 0 : 1,
+              transition: 'transform 360ms cubic-bezier(.22,1,.36,1), opacity 280ms ease',
+            }}
+          />
+          <line
+            x1="2" y1="13" x2="16" y2="13"
+            style={{
+              transformOrigin: '9px 13px',
+              transform: menuOpen ? 'translateY(-4px) rotate(-45deg)' : 'none',
+              transition: 'transform 520ms cubic-bezier(.22,1,.36,1)',
+            }}
+          />
         </svg>
       </button>
 
       {/* Mobile navigation sheet */}
-      {menuOpen && (
+      {sheetMounted && (
         <div
           id="era-mobile-nav"
           role="dialog"
           aria-modal="true"
           aria-label="Site navigation"
           className="era-mobile-nav"
+          data-state={menuOpen ? 'open' : 'closed'}
           style={{
+            pointerEvents: menuOpen ? 'auto' : 'none',
             position: 'fixed',
             inset: 0,
             zIndex: 65,
-            background: 'var(--ink)',
             color: 'var(--paper)',
             display: 'flex',
             flexDirection: 'column',
@@ -408,8 +445,11 @@ export function EraChrome({ sections }: EraChromeProps) {
             padding: 'clamp(28px, 9vw, 56px)',
           }}
         >
+          <div className="era-mobile-nav-bg" aria-hidden="true" />
           <span
+            className="era-mobile-nav-item"
             style={{
+              ['--i' as string]: 0,
               fontFamily: 'var(--font-ui)',
               fontSize: '10px',
               fontWeight: 600,
@@ -426,8 +466,10 @@ export function EraChrome({ sections }: EraChromeProps) {
               key={s.id}
               ref={i === 0 ? firstMenuLinkRef : undefined}
               type="button"
+              className="era-mobile-nav-item"
               onClick={() => jump(s.id)}
               style={{
+                ['--i' as string]: i,
                 background: 'none',
                 border: 'none',
                 borderBottom: '1px solid var(--rule-on-dark)',
@@ -445,7 +487,9 @@ export function EraChrome({ sections }: EraChromeProps) {
           ))}
           <a
             href={`mailto:${CONTACT_EMAIL}`}
+            className="era-mobile-nav-item"
             style={{
+              ['--i' as string]: sections.length + 1,
               display: 'block',
               marginTop: '10px',
               padding: '16px 0',

@@ -769,3 +769,60 @@ a {
   }
 }
 
+/* ============================================================
+   Hamburger sheet: circular reveal from the toggle, items stagger in
+   ============================================================ */
+@keyframes navBgIn {
+  from { transform: scale(0.001); }
+  to { transform: scale(1); }
+}
+@keyframes navBgOut {
+  from { transform: scale(1); }
+  to { transform: scale(0.001); }
+}
+@keyframes navItemIn {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
+}
+/* The reveal is a big solid circle scaled from the toggle's centre. Scaling
+   is compositor-only (no per-frame repaint), unlike animating clip-path. */
+.era-mobile-nav {
+  overscroll-behavior: contain;
+}
+.era-mobile-nav-bg {
+  position: fixed;
+  left: calc(100% - 40px - 150vmax);
+  top: calc(40px - 150vmax);
+  width: 300vmax;
+  height: 300vmax;
+  border-radius: 50%;
+  background: var(--ink);
+  pointer-events: none;
+  will-change: transform;
+  transform: scale(1);
+}
+.era-mobile-nav[data-state='open'] .era-mobile-nav-bg {
+  animation: navBgIn 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.era-mobile-nav[data-state='closed'] .era-mobile-nav-bg {
+  animation: navBgOut 620ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+.era-mobile-nav[data-state='open'] .era-mobile-nav-item {
+  animation: navItemIn 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(380ms + var(--i, 0) * 85ms);
+  will-change: transform, opacity;
+}
+.era-mobile-nav[data-state='closed'] .era-mobile-nav-item {
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .era-mobile-nav[data-state] .era-mobile-nav-bg {
+    animation: none;
+  }
+  .era-mobile-nav[data-state] .era-mobile-nav-item {
+    animation: none;
+    opacity: 1;
+  }
+}
+

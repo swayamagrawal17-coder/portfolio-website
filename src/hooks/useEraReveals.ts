@@ -11,6 +11,7 @@ import { gsap, ScrollTrigger } from '@/lib/gsap';
 export function useEraReveals() {
   useEffect(() => {
     const mm = gsap.matchMedia();
+    const undoSplits: Array<() => void> = [];
 
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       // Hero lockup: drift + fade as it leaves
@@ -75,6 +76,73 @@ export function useEraReveals() {
           immediateRender: false,
           scrollTrigger: { trigger: group, start: 'top 85%' },
         });
+      });
+
+      // Scroll-progress hairline across the top of the viewport
+      const progress = document.querySelector<HTMLElement>('[data-era-progress]');
+      if (progress) {
+        gsap.to(progress, {
+          scaleX: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: document.documentElement,
+            start: 0,
+            end: 'max',
+            scrub: 0.3,
+          },
+        });
+      }
+
+      // Ink-fill: words go from faint to full as the paragraph crosses the
+      // viewport. Words are wrapped in spans for the effect and the original
+      // markup is restored on cleanup.
+      gsap.utils.toArray<HTMLElement>('[data-era-ink]').forEach((el) => {
+        const original = el.innerHTML;
+        const words = (el.textContent ?? '').trim().split(/\s+/);
+        el.innerHTML = words.map((w) => `<span data-ink-word>${w.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span>`).join(' ');
+        undoSplits.push(() => {
+          el.innerHTML = original;
+        });
+        gsap.fromTo(
+          el.querySelectorAll('[data-ink-word]'),
+          { opacity: 0.16 },
+          {
+            opacity: 1,
+            ease: 'none',
+            stagger: 0.1,
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 82%',
+              end: 'bottom 50%',
+              scrub: true,
+            },
+          }
+        );
+      });
+
+      // Portrait: wipes up from its base as it enters, then drifts slowly
+      // against the scroll for a touch of depth.
+      gsap.utils.toArray<HTMLElement>('[data-era-portrait]').forEach((fig) => {
+        gsap.fromTo(
+          fig,
+          { clipPath: 'inset(100% 0% 0% 0%)' },
+          {
+            clipPath: 'inset(0% 0% 0% 0%)',
+            ease: 'none',
+            immediateRender: false,
+            scrollTrigger: { trigger: fig, start: 'top 95%', end: 'top 50%', scrub: true },
+          }
+        );
+        gsap.fromTo(
+          fig,
+          { y: 36 },
+          {
+            y: -36,
+            ease: 'none',
+            immediateRender: false,
+            scrollTrigger: { trigger: fig, start: 'top bottom', end: 'bottom top', scrub: true },
+          }
+        );
       });
 
       // SVG line draw-in (any remaining .era-draw-path elements)
@@ -297,6 +365,7 @@ export function useEraReveals() {
       window.removeEventListener('load', refresh);
       document.removeEventListener('visibilitychange', refresh);
       mm.revert();
+      undoSplits.forEach((undo) => undo());
     };
   }, []);
 }

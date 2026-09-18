@@ -174,6 +174,24 @@ export function EraChrome({ sections }: EraChromeProps) {
 
   return (
     <>
+      {/* Scroll-progress hairline, top edge */}
+      <div
+        data-era-progress
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '2px',
+          zIndex: 80,
+          background: 'var(--bougainvillea)',
+          transformOrigin: 'left center',
+          transform: 'scaleX(0)',
+          pointerEvents: 'none',
+        }}
+      />
+
       {/* Rotating circular mark, top-left */}
       <div
         className="era-rotating-mark"

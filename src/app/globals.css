@@ -861,3 +861,18 @@ a {
   }
 }
 
+/* Phones: the About portrait sits in the middle of the column */
+@media (max-width: 640px) {
+  #about figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  /* Fill the column so the portrait reads as a real feature on a phone
+     (roughly three quarters of the screen height at 9:16-ish ratios). */
+  #about img {
+    width: 100% !important;
+    max-height: none !important;
+  }
+}

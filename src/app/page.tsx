@@ -299,16 +299,16 @@ export default function Home() {
               className="responsive-grid-2col"
             >
               <div data-era-reveal style={{ alignSelf: 'start', display: 'flex', flexDirection: 'column', gap: '22px', maxWidth: '60ch' }}>
-                <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontSize: 'var(--size-h3)', lineHeight: 'var(--lh-h3)', color: 'var(--ink)' }}>
+                <p data-era-ink style={{ margin: 0, fontFamily: 'var(--font-serif)', fontSize: 'var(--size-h3)', lineHeight: 'var(--lh-h3)', color: 'var(--ink)' }}>
                   Most of my work starts the same way: a claim someone believes, with no data behind it. I go and collect it.
                 </p>
-                <p style={{ margin: 0, fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--ink-soft)' }}>
+                <p data-era-ink style={{ margin: 0, fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--ink-soft)' }}>
                   The UPI survey put me in nine of Pimpri-Chinchwad&apos;s markets with a questionnaire and 51 street vendors, working out what actually happens to one of them when a payment fails. The Ind AS 10 review was quieter: a company&apos;s PP&amp;E disclosures, read line by line until the gaps showed. And at the consulting firm I interned with, a client was paying far more for its leads than they were worth, so I traced the funnel until the reason was obvious.
                 </p>
-                <p style={{ margin: 0, fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--ink-soft)' }}>
+                <p data-era-ink style={{ margin: 0, fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--ink-soft)' }}>
                   The analysis mostly happens in Excel. The UPI survey turned into a 33-page report that named seven barriers to financial inclusion. A prize-distribution process that used to tie up a 35-person team for days now runs off a tracker in about half the time. There is coordination work in the background too: placement drives for 100+ students across 30+ companies, and the logistics for a 130-person college fest, which nobody notices until something slips.
                 </p>
-                <p style={{ margin: 0, fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--ink-soft)' }}>
+                <p data-era-ink style={{ margin: 0, fontSize: 'var(--size-body)', lineHeight: 'var(--lh-body)', color: 'var(--ink-soft)' }}>
                   I did my first year at Narsee Monjee in Mumbai, then moved back to Pune for the rest. I graduate in 2027 and I&apos;m looking for a management role in finance.
                 </p>
                 <p className="era-script" style={{ margin: '10px 0 0', fontSize: '44px', color: 'var(--bougainvillea)' }}>
@@ -316,13 +316,14 @@ export default function Home() {
                 </p>
               </div>
 
-              <figure style={{ margin: 0, position: 'relative', alignSelf: 'end', marginTop: 'clamp(-140px, -8vw, -48px)' }}>
+              <figure data-era-portrait style={{ margin: 0, position: 'relative', alignSelf: 'end', marginTop: 'clamp(-140px, -8vw, -48px)' }}>
                 <Image
                   src="/swayam-portrait.jpg"
                   alt="Illustrated portrait of Swayam Agrawal"
                   width={700}
                   height={1244}
                   sizes="(max-width: 900px) 100vw, 45vw"
+                  loading="eager"
                   style={{
                     display: 'block',
                     width: '100%',

@@ -20,6 +20,9 @@ export function useStatsCountUp(containerRef: React.RefObject<HTMLDivElement | n
       return;
     }
 
+    // Phones run their own per-card count (see useEraReveals).
+    if (window.matchMedia('(max-width: 640px)').matches) return;
+
     const intervals: ReturnType<typeof setInterval>[] = [];
     let hasStarted = false;
 

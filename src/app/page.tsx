@@ -235,8 +235,9 @@ export default function Home() {
                   By the numbers
                 </span>
                 {stats.map((stat, idx) => (
-                <div key={idx} style={{ flexShrink: 0 }}>
+                <div key={idx} data-era-stat style={{ flexShrink: 0, ['--d' as string]: [0, 14, -8, 18, 4, -12, 10, -4, 16][idx % 9] }}>
                   <p
+                    className="era-stat-num"
                     style={{
                       margin: 0,
                       whiteSpace: 'nowrap',
@@ -254,6 +255,7 @@ export default function Home() {
                     <span style={{ fontSize: '0.42em', color: 'var(--bougainvillea)' }}>{stat.suffix}</span>
                   </p>
                   <p
+                    className="era-stat-label"
                     style={{
                       margin: '18px 0 0',
                       maxWidth: '34ch',

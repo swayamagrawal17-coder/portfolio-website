@@ -861,6 +861,72 @@ a {
   }
 }
 
+/* ============================================================
+   Phones: numbers as a card stack, toolkit + footer upgrades
+   ============================================================ */
+@media (max-width: 640px) and (prefers-reduced-motion: no-preference) {
+  [data-era-proof-stage] {
+    padding: 72px 0 90px !important;
+  }
+  [data-era-proof-track] {
+    display: block !important;
+    padding: 0 20px !important;
+    row-gap: 0;
+  }
+  [data-era-proof-track]::before {
+    content: 'By the numbers';
+    display: block;
+    margin-bottom: 26px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--paper-on-dark);
+  }
+  [data-era-stat] {
+    position: sticky;
+    top: calc(92px + var(--d, 0) * 1px);
+    margin-bottom: 16px;
+    padding: 24px 24px 26px;
+    min-height: 176px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 12px;
+    background: #26394f;
+    border: 1px solid var(--rule-on-dark);
+    border-radius: 6px;
+    box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.7);
+    will-change: transform;
+  }
+  [data-era-stat]:nth-of-type(3n + 2) {
+    background: #3c1020;
+  }
+  [data-era-stat]:nth-of-type(3n) {
+    background: #2e4863;
+  }
+  .era-stat-num {
+    font-size: clamp(52px, 17vw, 72px) !important;
+  }
+  .era-stat-label {
+    max-width: none !important;
+    margin-top: 0 !important;
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+  }
+  [data-era-toolkit-grid] h3 {
+    font-size: clamp(20px, 6vw, 24px) !important;
+    line-height: 1.15;
+  }
+}
+
+@media (max-width: 640px) {
+  [data-era-footer-mark] {
+    font-size: clamp(30px, 9vw, 40px) !important;
+  }
+}
+
 /* Phones: the About portrait sits in the middle of the column */
 @media (max-width: 640px) {
   #about figure {

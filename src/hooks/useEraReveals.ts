@@ -351,6 +351,94 @@ export function useEraReveals() {
       ScrollTrigger.refresh();
     });
 
+    // Phones: numbers as a stack of cards, toolkit items that wipe in and
+    // dim behind you.
+    mm.add('(prefers-reduced-motion: no-preference) and (max-width: 640px)', () => {
+      // Numbers: a scattered pile. Cards are tossed on, pin near the top and
+      // stack up crooked; each figure counts up as its card lands.
+      const cards = gsap.utils.toArray<HTMLElement>('[data-era-stat]');
+      const finals: Array<() => void> = [];
+      // Each card lands on the pile with its own tilt and sideways drift.
+      const tilt = [-3.5, 2.5, -1.5, 4, -2.5, 3, -4, 1.5, -2];
+      const drift = [-10, 12, -6, 10, -12, 6, -8, 12, -4];
+      cards.forEach((card, i) => {
+        const rot = tilt[i % tilt.length];
+        const dx = drift[i % drift.length];
+        gsap.set(card, { rotation: rot, x: dx });
+        gsap.fromTo(
+          card,
+          { y: 150, rotation: rot * 3.2, x: dx * 2.5, opacity: 0 },
+          {
+            y: 0,
+            rotation: rot,
+            x: dx,
+            opacity: 1,
+            ease: 'none',
+            immediateRender: false,
+            scrollTrigger: { trigger: card, start: 'top 100%', end: 'top 74%', scrub: true },
+          }
+        );
+        const el = card.querySelector<HTMLElement>('[data-count-to]');
+        if (!el) return;
+        const target = parseFloat(el.getAttribute('data-count-to') || '0');
+        const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+        el.textContent = (0).toFixed(decimals);
+        finals.push(() => {
+          el.textContent = target.toFixed(decimals);
+        });
+        ScrollTrigger.create({
+          trigger: card,
+          start: 'top 80%',
+          once: true,
+          onEnter: () => {
+            const o = { v: 0 };
+            gsap.to(o, {
+              v: target,
+              duration: 1.4,
+              ease: 'power2.out',
+              onUpdate: () => {
+                el.textContent = o.v.toFixed(decimals);
+              },
+              onComplete: () => {
+                el.textContent = target.toFixed(decimals);
+              },
+            });
+          },
+        });
+      });
+
+      // Toolkit: title wipes in, marker spins, copy rises; the item then
+      // dims as it leaves so the one you are reading holds the light.
+      gsap.utils.toArray<HTMLElement>('[data-era-toolkit-grid] > div').forEach((item) => {
+        const mark = item.children[0];
+        const title = item.children[1];
+        const desc = item.children[2];
+        const tl = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: { trigger: item, start: 'top 90%', end: 'top 50%', scrub: 0.5 },
+        });
+        tl.fromTo(item, { opacity: 0.15 }, { opacity: 1, duration: 0.5 }, 0);
+        if (mark) tl.fromTo(mark, { scale: 0, rotation: -120 }, { scale: 1, rotation: 0, duration: 0.4, ease: 'back.out(2)' }, 0);
+        if (title) tl.fromTo(title, { clipPath: 'inset(0 100% 0 0)', x: -22 }, { clipPath: 'inset(0 0% 0 0)', x: 0, duration: 0.7 }, 0.1);
+        if (desc) tl.fromTo(desc, { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.3);
+        gsap.fromTo(
+          item,
+          { opacity: 1 },
+          {
+            opacity: 0.3,
+            ease: 'none',
+            immediateRender: false,
+            scrollTrigger: { trigger: item, start: 'bottom 34%', end: 'bottom 6%', scrub: true },
+          }
+        );
+      });
+
+      ScrollTrigger.refresh();
+      return () => {
+        finals.forEach((f) => f());
+      };
+    });
+
     // Experience timeline wave — desktop/tablet: draws itself left-to-right as
     // you scroll the section, and each node pops the moment the drawing line
     // reaches it. Width-gated so it doesn't fight the phone version below for

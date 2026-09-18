@@ -101,7 +101,14 @@ export function useWorkCoverflow() {
     };
 
     const setActive = (index: number) => {
-      currentIndex = Math.max(0, Math.min(index, CARD_COUNT - 1));
+      const nextIndex = Math.max(0, Math.min(index, CARD_COUNT - 1));
+      // Moving to a different card closes whichever one is open, so an
+      // expanded card never lingers behind the new selection.
+      if (nextIndex !== currentIndex && expandedIdx !== null) {
+        expandedIdx = null;
+        startTimer();
+      }
+      currentIndex = nextIndex;
       updateUI();
     };
 
@@ -194,6 +201,9 @@ export function useWorkCoverflow() {
     ctaBtns.forEach((btn, cardIndex) => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        // A side card's button brings that card forward (closing any open
+        // one) before opening it.
+        setActive(cardIndex);
         toggleExpanded(cardIndex);
       });
     });

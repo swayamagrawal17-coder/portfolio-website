@@ -522,12 +522,13 @@ a {
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
-  /* The rotating mark stays fixed top-left at 0.7 scale (24-96.8px on both
-     axes) while the coverflow's centered card drifts through that same
-     screen corner as the page scrolls — without this inset, a card's
-     category label sits directly under the mark's ring text. */
-  .coverflow-content {
-    padding-left: 64px !important;
+  /* The rotating mark stays fixed top-left while the coverflow drifts
+     through that corner as the page scrolls. Lifting the whole coverflow
+     above the mark lets the cards win where they overlap, with no extra
+     padding to knock their content off-centre. Card-to-card stacking is
+     unaffected (it happens inside the stage). */
+  [data-era-work-stage] {
+    z-index: 61;
   }
 }
 /* A landscape phone reports a width well past 640px (e.g. 812px), so the
@@ -767,3 +768,4 @@ a {
     padding: clamp(20px, 5vw, 48px) !important;
   }
 }
+

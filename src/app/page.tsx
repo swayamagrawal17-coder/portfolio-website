@@ -454,10 +454,10 @@ export default function Home() {
                         {project.category}
                       </span>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '19px', lineHeight: 1.25, color: 'var(--paper)' }}>
+                        <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '19px', lineHeight: 1.25, minHeight: '47.5px', color: 'var(--paper)' }}>
                           {project.title}
                         </p>
-                        <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.5, color: 'var(--paper-on-dark)' }}>
+                        <p style={{ margin: 0, fontSize: '12.5px', lineHeight: 1.5, minHeight: '75px', color: 'var(--paper-on-dark)' }}>
                           {project.shortDescription}
                         </p>
                         <button

@@ -1273,15 +1273,19 @@ export default function Home() {
               What I can do for you
             </h2>
 
+            <div data-era-toolkit style={{ position: 'relative', marginTop: 'clamp(48px, 7vw, 88px)' }}>
             <div
-              data-era-reveal
+              data-era-rule
+              aria-hidden="true"
+              style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'var(--rule-ink-strong)', transformOrigin: 'left center' }}
+            />
+            <div
+              data-era-toolkit-grid
               className="responsive-grid-2col"
               style={{
-                marginTop: 'clamp(48px, 7vw, 88px)',
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
                 gap: '40px 0',
-                borderTop: '1px solid var(--rule-ink-strong)',
                 paddingTop: '40px',
               }}
             >
@@ -1289,6 +1293,7 @@ export default function Home() {
               <ServiceItem tone="light" icon="•" title="Analytics" description="Excel with pivot tables, VLOOKUP and models, plus data interpretation." />
               <ServiceItem tone="light" icon="•" title="Management" description="Project planning, Agile methods, risk tracking, operations management, team coordination." />
               <ServiceItem tone="light" icon="•" title="Certified" description="Google Project Management, Google AI Essentials, UPenn Finance & Quantitative Modeling, Citi and Deloitte simulations." />
+            </div>
             </div>
           </div>
         </section>
@@ -1299,7 +1304,7 @@ export default function Home() {
           aria-labelledby="contact-heading"
           style={{ position: 'relative', background: 'var(--paper)', color: 'var(--ink)', padding: `clamp(90px, 12vw, 150px) ${BAND_X} clamp(70px, 9vw, 110px)`, overflow: 'hidden' }}
         >
-          <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '30px', alignItems: 'flex-start' }}>
+          <div data-era-reveal style={{ maxWidth: 'var(--content-max)', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '30px', alignItems: 'flex-start' }}>
             <span className="era-eyebrow">Contact</span>
             <h2
               id="contact-heading"
@@ -1390,7 +1395,7 @@ export default function Home() {
       </main>
 
       {/* ---------- Footer ---------- */}
-      <footer style={{ background: 'var(--paper-deep)', padding: `64px ${BAND_X} 44px`, boxSizing: 'border-box' }}>
+      <footer data-era-footer style={{ background: 'var(--paper-deep)', padding: `64px ${BAND_X} 44px`, boxSizing: 'border-box' }}>
         <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px 32px' }}>
             <button
@@ -1400,6 +1405,7 @@ export default function Home() {
               style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
             >
               <span
+                data-era-footer-mark
                 className="era-display"
                 style={{ fontSize: '20px', color: 'var(--ink)' }}
               >
@@ -1462,7 +1468,7 @@ export default function Home() {
             style={{
               marginTop: '40px',
               paddingTop: '26px',
-              borderTop: '1px solid var(--rule-ink)',
+              position: 'relative',
               display: 'flex',
               flexWrap: 'wrap',
               justifyContent: 'space-between',
@@ -1470,6 +1476,11 @@ export default function Home() {
               gap: '8px 20px',
             }}
           >
+            <div
+              data-era-footer-rule
+              aria-hidden="true"
+              style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'var(--rule-ink)', transformOrigin: 'left center' }}
+            />
             <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>© {new Date().getFullYear()} Swayam Agrawal</span>
             <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>No cookies. Anonymous page-view analytics only.</span>
             <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>Pune, India</span>

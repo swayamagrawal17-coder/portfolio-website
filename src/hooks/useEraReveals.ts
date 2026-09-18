@@ -145,6 +145,42 @@ export function useEraReveals() {
         );
       });
 
+      // Footer: plays once when it comes into view. Wordmark letters rise out
+      // of a mask, links and the LinkedIn mark stagger in, the bottom rule draws.
+      const footer = document.querySelector<HTMLElement>('[data-era-footer]');
+      if (footer) {
+        const mark = footer.querySelector<HTMLElement>('[data-era-footer-mark]');
+        let chars: HTMLElement[] = [];
+        if (mark) {
+          const original = mark.innerHTML;
+          const text = mark.textContent ?? '';
+          mark.innerHTML = Array.from(text)
+            .map((c) =>
+              c === ' '
+                ? '<span style="display:inline-block;width:0.3em"></span>'
+                : `<span style="display:inline-block;overflow:hidden;vertical-align:top"><span data-footer-char style="display:inline-block">${c.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span></span>`
+            )
+            .join('');
+          undoSplits.push(() => {
+            mark.innerHTML = original;
+          });
+          chars = Array.from(mark.querySelectorAll<HTMLElement>('[data-footer-char]'));
+        }
+        const links = footer.querySelectorAll('nav li');
+        const social = footer.querySelectorAll('a[aria-label="LinkedIn"]');
+        const rule = footer.querySelector<HTMLElement>('[data-era-footer-rule]');
+        const meta = rule?.parentElement ? Array.from(rule.parentElement.children).filter((c) => c !== rule) : [];
+        const tl = gsap.timeline({
+          defaults: { ease: 'power3.out', immediateRender: false },
+          scrollTrigger: { trigger: footer, start: 'top 94%', toggleActions: 'play none none reverse' },
+        });
+        if (chars.length) tl.fromTo(chars, { yPercent: 110 }, { yPercent: 0, duration: 0.9, stagger: 0.035 }, 0);
+        tl.fromTo(links, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.07 }, 0.15);
+        tl.fromTo(social, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(2)' }, 0.45);
+        if (rule) tl.fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: 1.1, ease: 'power2.inOut' }, 0.3);
+        if (meta.length) tl.fromTo(meta, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.09 }, 0.6);
+      }
+
       // SVG line draw-in (any remaining .era-draw-path elements)
       gsap.utils.toArray<SVGPathElement>('.era-draw-path').forEach((path) => {
         const len = path.getTotalLength();
@@ -278,6 +314,40 @@ export function useEraReveals() {
           },
         }
       );
+      ScrollTrigger.refresh();
+    });
+
+    // Toolkit (desktop / tablet): rule draws, columns rise in sequence.
+    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 641px)', () => {
+      // Toolkit: the top rule draws across, then the four columns rise in
+      // one after another with their markers spinning into place, all tied
+      // to the scroll so it follows your hand.
+      const toolkit = document.querySelector<HTMLElement>('[data-era-toolkit]');
+      if (toolkit) {
+        const rule = toolkit.querySelector<HTMLElement>('[data-era-rule]');
+        const items = Array.from(
+          toolkit.querySelector<HTMLElement>('[data-era-toolkit-grid]')?.children ?? []
+        ) as HTMLElement[];
+        const tl = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: { trigger: toolkit, start: 'top 88%', end: 'top 32%', scrub: 0.6 },
+        });
+        if (rule) tl.fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: 0.5 }, 0);
+        items.forEach((item, i) => {
+          const at = 0.15 + i * 0.14;
+          tl.fromTo(item, { y: 70, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5 }, at);
+          const mark = item.children[0];
+          if (mark) {
+            tl.fromTo(
+              mark,
+              { scale: 0, rotation: -120 },
+              { scale: 1, rotation: 0, duration: 0.3, ease: 'back.out(2)' },
+              at + 0.1
+            );
+          }
+        });
+      }
+
       ScrollTrigger.refresh();
     });
 

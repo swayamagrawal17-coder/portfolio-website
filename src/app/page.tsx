@@ -161,6 +161,42 @@ export default function Home() {
               Email me
             </Button>
           </div>
+
+          <div
+            data-era-hero-cue
+            aria-hidden="true"
+            style={{ position: 'absolute', left: '50%', bottom: '22px', transform: 'translateX(-50%)', pointerEvents: 'none' }}
+          >
+          <div
+            className="era-hero-cue"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-ui)',
+                fontSize: '10px',
+                fontWeight: 600,
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                color: 'var(--ink-soft)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Scroll to view the site
+            </span>
+            <span style={{ position: 'relative', display: 'block', width: '1px', height: '46px', background: 'var(--rule-ink-strong)', overflow: 'hidden' }}>
+              <span
+                className="era-hero-cue-dot"
+                style={{ position: 'absolute', top: 0, left: '-1px', width: '3px', height: '10px', borderRadius: '2px', background: 'var(--accent-on-light)' }}
+              />
+            </span>
+          </div>
+          </div>
         </section>
 
         {/* ---------- Proof / by the numbers ---------- */}

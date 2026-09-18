@@ -31,6 +31,16 @@ export function useEraReveals() {
         });
       }
 
+      // Hero scroll cue: gone within the first stretch of scrolling
+      const heroCue = document.querySelector('[data-era-hero-cue]');
+      if (heroCue && heroSection) {
+        gsap.to(heroCue, {
+          opacity: 0,
+          ease: 'none',
+          scrollTrigger: { trigger: heroSection, start: 'top top', end: '+=180', scrub: true },
+        });
+      }
+
       // Big section headlines: rise + settle. immediateRender:false so a headline
       // is never left stranded dim if its trigger can't measure.
       gsap.utils.toArray<HTMLElement>('[data-era-scrub]').forEach((el) => {

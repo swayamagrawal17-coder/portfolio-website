@@ -42,7 +42,7 @@ export const projects: Project[] = [
     shortDescription:
       'A client taking its first product to market with no clear picture of the buyer or the channel. I ran the research and built the plan.',
     readMoreCtaText: 'Read more ↓',
-    expandedDate: 'Jul–Oct 2026 · BIIOS Startup Consulting',
+    expandedDate: 'Jul–Sep 2026 · BIIOS Startup Consulting',
     fullDescription:
       'Sized the market, mapped the competition, and worked out where the product had room to win. That became a positioning and channel plan the client used to launch.',
     tags: ['Market research', 'GTM strategy', 'Benchmarking'],
@@ -57,7 +57,7 @@ export const projects: Project[] = [
     shortDescription:
       'Two client accounts at once. One was paying too much for leads that never converted; the other needed its website measured against its competitors.',
     readMoreCtaText: 'Read more ↓',
-    expandedDate: 'Jul–Oct 2026 · BIIOS Startup Consulting',
+    expandedDate: 'Jul–Sep 2026 · BIIOS Startup Consulting',
     fullDescription:
       'For a capital advisory firm, I traced the lead funnel from first contact to close and worked out the cost sitting at each stage. For the second account, a full website audit: structure, positioning, and how it compared with competitors.',
     tags: ['Funnel analysis', 'Digital audit', 'Positioning'],

@@ -25,7 +25,7 @@ export const experience: ExperienceEntry[] = [
     desc: 'Tracked 16 events with 8 faculty reps over two weeks with zero scheduling conflicts; built an Excel tracker for 35+ members that halved prize distribution time.',
   },
   {
-    period: 'Jul–Oct 2026',
+    period: 'Jul–Sep 2026',
     title: 'HR & Market Research Intern',
     org: 'BIIOS Startup Consulting LLP',
     desc: 'Screened 100+ resumes and ran end-to-end HR operations while delivering market research, GTM and digital audit work for four clients.',

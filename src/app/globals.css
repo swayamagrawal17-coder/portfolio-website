@@ -942,3 +942,29 @@ a {
     max-height: none !important;
   }
 }
+
+/* ============================================================
+   Testimonials: static, stacked fallback (reduced motion + phones)
+   ============================================================ */
+@media (prefers-reduced-motion: reduce), (max-width: 640px) {
+  .era-testimonial-runway {
+    height: auto !important;
+  }
+  .era-testimonial-stage {
+    position: relative !important;
+    min-height: 0 !important;
+  }
+  .era-testimonial-grid {
+    display: flex !important;
+    flex-direction: column;
+    gap: clamp(44px, 12vw, 64px);
+  }
+  .era-testimonial {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+  .era-testimonial-ticks {
+    display: none !important;
+  }
+}

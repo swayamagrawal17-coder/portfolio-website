@@ -11,11 +11,13 @@ import { useEraReveals } from '@/hooks/useEraReveals';
 import { useStatsCountUp } from '@/hooks/useStatsCountUp';
 import { useWorkCoverflow } from '@/hooks/useWorkCoverflow';
 import { useCertScroller } from '@/hooks/useCertScroller';
+import { useTestimonials } from '@/hooks/useTestimonials';
 import { useBuildsLedger } from '@/hooks/useBuildsLedger';
 import { useHorizonDemo } from '@/hooks/useHorizonDemo';
 import { scrollTo, scrollToTop } from '@/hooks/useScrollTo';
 import { projects } from '@/lib/projects';
 import { certifications } from '@/lib/certifications';
+import { visibleTestimonials } from '@/lib/testimonials';
 import { stats } from '@/lib/stats';
 import { experience } from '@/lib/experience';
 import { builds } from '@/lib/builds';
@@ -29,6 +31,7 @@ const CHROME_SECTIONS: ChromeSection[] = [
   { id: 'builds', label: 'Side projects', tone: 'dark', primary: true, navOrder: 2, navLabel: 'Projects' },
   { id: 'experience', label: 'Track record', tone: 'light' },
   { id: 'certifications', label: 'Certifications', tone: 'dark', primary: true, navOrder: 4 },
+  ...(visibleTestimonials.length ? [{ id: 'testimonials', label: 'Kind words', tone: 'light' as const }] : []),
   { id: 'toolkit', label: 'Toolkit', tone: 'dark', primary: true, navOrder: 5 },
   { id: 'contact', label: 'Contact', tone: 'light', primary: true, navOrder: 6 },
 ];
@@ -38,6 +41,7 @@ const BAND_X = 'clamp(28px, 6vw, 96px)';
 export default function Home() {
   const { containerRef: workContainer, stageRef: workStage } = useWorkCoverflow();
   useCertScroller();
+  useTestimonials();
   useBuildsLedger();
   useHorizonDemo();
   useEraReveals();
@@ -1255,6 +1259,117 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* ---------- Testimonials: one quote at a time (only renders when there is a real quote) ---------- */}
+        {visibleTestimonials.length > 0 && (
+          <section
+            id="testimonials"
+            aria-labelledby="testimonials-heading"
+            style={{ position: 'relative', background: 'var(--paper)', color: 'var(--ink)' }}
+          >
+            <div
+              id="testimonial-runway"
+              className="era-testimonial-runway"
+              style={{ position: 'relative', height: visibleTestimonials.length > 1 ? `${100 + (visibleTestimonials.length - 1) * 75}vh` : 'auto' }}
+            >
+              <div
+                className="era-testimonial-stage"
+                style={{
+                  position: visibleTestimonials.length > 1 ? 'sticky' : 'relative',
+                  top: 0,
+                  minHeight: '100vh',
+                  boxSizing: 'border-box',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  padding: `clamp(90px, 12vw, 150px) ${BAND_X}`,
+                }}
+              >
+                <div style={{ width: '100%', maxWidth: 'var(--content-max)', margin: '0 auto', position: 'relative' }}>
+                  <h2 id="testimonials-heading" className="era-eyebrow" style={{ margin: 0 }}>
+                    Kind words
+                  </h2>
+                  <span
+                    aria-hidden="true"
+                    className="era-display"
+                    style={{ display: 'block', margin: '18px 0 0', fontSize: 'clamp(90px, 14vw, 200px)', lineHeight: 0.7, color: 'var(--bougainvillea)', opacity: 0.9 }}
+                  >
+                    &ldquo;
+                  </span>
+                  <div className="era-testimonial-grid" style={{ display: 'grid', marginTop: 'clamp(8px, 2vw, 24px)' }}>
+                    {visibleTestimonials.map((t, i) => (
+                      <figure
+                        key={t.id}
+                        data-testimonial
+                        className="era-testimonial"
+                        style={{
+                          gridArea: '1 / 1',
+                          margin: 0,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 'clamp(22px, 3vw, 36px)',
+                          justifyContent: 'center',
+                          opacity: i === 0 ? 1 : 0,
+                          transform: i === 0 ? 'translateY(0)' : 'translateY(28px)',
+                          pointerEvents: i === 0 ? 'auto' : 'none',
+                          transition: 'opacity 600ms var(--ease-out), transform 600ms var(--ease-out)',
+                        }}
+                      >
+                        <blockquote
+                          style={{
+                            margin: 0,
+                            maxWidth: '32ch',
+                            fontFamily: 'var(--font-serif)',
+                            fontWeight: 600,
+                            fontSize: 'clamp(24px, 3.4vw, 46px)',
+                            lineHeight: 1.2,
+                            letterSpacing: '-0.01em',
+                            color: t.quote ? 'var(--ink)' : 'var(--ink-soft)',
+                            fontStyle: t.quote ? 'normal' : 'italic',
+                          }}
+                        >
+                          <p style={{ margin: 0 }}>{t.quote ?? (process.env.NODE_ENV === 'development' ? 'Quote to be added (shows in development only).' : '')}</p>
+                        </blockquote>
+                        <figcaption style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <span style={{ fontFamily: 'var(--font-ui)', fontSize: '13px', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--ink)' }}>
+                            {t.sourceUrl ? (
+                              <a href={t.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'var(--rule-ink-strong)' }}>
+                                {t.name}
+                              </a>
+                            ) : (
+                              t.name
+                            )}
+                          </span>
+                          <span style={{ fontSize: 'var(--size-small)', color: 'var(--ink-soft)' }}>
+                            {[t.role, t.org].filter(Boolean).join(' · ')}
+                          </span>
+                        </figcaption>
+                      </figure>
+                    ))}
+                  </div>
+                  {visibleTestimonials.length > 1 && (
+                    <div aria-hidden="true" className="era-testimonial-ticks" style={{ display: 'flex', gap: '8px', marginTop: 'clamp(32px, 5vw, 56px)' }}>
+                      {visibleTestimonials.map((t, i) => (
+                        <span
+                          key={t.id}
+                          data-testimonial-tick
+                          style={{
+                            width: '44px',
+                            height: '3px',
+                            background: i === 0 ? 'var(--bougainvillea)' : 'var(--rule-ink-strong)',
+                            transform: i === 0 ? 'scaleX(1)' : 'scaleX(0.55)',
+                            transformOrigin: 'left center',
+                            transition: 'background 400ms ease, transform 400ms var(--ease-out)',
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ---------- Toolkit (burgundy) ---------- */}
         <section

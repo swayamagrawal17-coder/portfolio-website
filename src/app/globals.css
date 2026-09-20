@@ -948,6 +948,13 @@ a {
 @media (pointer: coarse), (max-width: 640px) {
   .era-rotating-mark {
     mix-blend-mode: normal !important;
+    transition: opacity 300ms ease, visibility 0s linear 0s;
+  }
+  /* Phones show the mark in the hero only */
+  .era-rotating-mark.is-away {
+    opacity: 0;
+    visibility: hidden !important;
+    transition: opacity 300ms ease, visibility 0s linear 300ms;
   }
 }
 @media (pointer: coarse), (max-width: 900px) {

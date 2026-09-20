@@ -45,7 +45,44 @@ export function EraChrome({ sections }: EraChromeProps) {
   useEffect(() => {
     const el = markRef.current;
     if (!el) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Phones: the mark spins in the hero only, then disappears for the rest of
+    // the page (and stops spinning), so it never sits over other sections and a
+    // phone's graphics chip isn't animating a fixed layer the whole way down.
+    if (window.matchMedia('(pointer: coarse), (max-width: 640px)').matches) {
+      const wrap = el.parentElement as HTMLElement | null;
+      const hero = document.getElementById('hero');
+      const phoneSpin = reduceMotion
+        ? null
+        : gsap.to(el, { rotation: 360, duration: 24, ease: 'none', repeat: -1 });
+      const heroTrigger =
+        hero && wrap
+          ? ScrollTrigger.create({
+              trigger: hero,
+              start: 'top top',
+              end: 'bottom 35%',
+              onUpdate: (self) => {
+                const away = self.progress >= 1;
+                wrap.classList.toggle('is-away', away);
+                phoneSpin?.paused(away);
+              },
+              onRefresh: (self) => {
+                const away = self.progress >= 1;
+                wrap.classList.toggle('is-away', away);
+                phoneSpin?.paused(away);
+              },
+            })
+          : null;
+      return () => {
+        heroTrigger?.kill();
+        phoneSpin?.kill();
+        wrap?.classList.remove('is-away');
+        gsap.set(el, { clearProps: 'rotation,transform' });
+      };
+    }
+
+    if (reduceMotion) return;
 
     const spin = gsap.to(el, { rotation: 360, duration: 24, ease: 'none', repeat: -1 });
     let decay: ReturnType<typeof setTimeout>;

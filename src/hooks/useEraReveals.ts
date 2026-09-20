@@ -506,24 +506,48 @@ export function useEraReveals() {
       gsap.set(lineEl, { scaleY: 0 });
       gsap.set(nodes, { scale: 0, opacity: 0 });
 
-      const waveTl = gsap.timeline({
-        defaults: { ease: 'none', immediateRender: false },
-        scrollTrigger: {
-          trigger: timelineEl,
-          start: 'top 80%',
-          end: 'bottom 70%',
-          scrub: 0.5,
-        },
-      });
-      waveTl.to(lineEl, { scaleY: 1, duration: 1 }, 0);
-      nodes.forEach((node, i) => {
-        const at = (i + 0.5) / Math.max(nodes.length, 1);
-        waveTl.fromTo(
+      // Each dot pops at the exact moment the drawing line reaches it. Cards on
+      // a phone have different heights, so a dot's real position along the
+      // line is measured (on every layout refresh) instead of assumed to be
+      // evenly spaced, which used to make dots appear after the line had passed.
+      let fractions: number[] = [];
+      const shown = nodes.map(() => false);
+      const pops = nodes.map((node) =>
+        gsap.fromTo(
           node,
           { scale: 0, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.07, ease: 'back.out(2.2)' },
-          at,
-        );
+          { scale: 1, opacity: 1, duration: 0.35, ease: 'back.out(2.2)', paused: true, immediateRender: false }
+        )
+      );
+      const measure = () => {
+        const line = timelineEl.getBoundingClientRect();
+        fractions = nodes.map((n) => {
+          const r = n.getBoundingClientRect();
+          return (r.top + r.height / 2 - line.top) / Math.max(line.height, 1);
+        });
+      };
+      const apply = (progress: number) => {
+        gsap.set(lineEl, { scaleY: progress });
+        nodes.forEach((_, i) => {
+          const reached = progress >= fractions[i];
+          if (reached && !shown[i]) {
+            shown[i] = true;
+            pops[i].play();
+          } else if (!reached && shown[i]) {
+            shown[i] = false;
+            pops[i].reverse();
+          }
+        });
+      };
+      ScrollTrigger.create({
+        trigger: timelineEl,
+        start: 'top 80%',
+        end: 'bottom 70%',
+        onRefresh: (self) => {
+          measure();
+          apply(self.progress);
+        },
+        onUpdate: (self) => apply(self.progress),
       });
       ScrollTrigger.refresh();
     });

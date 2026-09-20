@@ -13,6 +13,9 @@ import { setLenis } from '@/hooks/useScrollTo';
 export function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Touch devices already scroll with native momentum; layering JS smoothing
+    // on top costs frames on a phone and fights sticky sections.
+    if (window.matchMedia('(pointer: coarse)').matches) return;
 
     const lenis = new Lenis({
       duration: 1.05,

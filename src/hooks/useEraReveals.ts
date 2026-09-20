@@ -14,6 +14,11 @@ export function useEraReveals() {
     const undoSplits: Array<() => void> = [];
 
     mm.add('(prefers-reduced-motion: no-preference)', () => {
+      // Phones and tablets skip the effects that make the browser re-lay-out or
+      // repaint big areas every frame (blur, letter-spacing, corner radius).
+      const light = window.matchMedia('(pointer: coarse), (max-width: 900px)').matches;
+      const phone = window.matchMedia('(max-width: 640px)').matches;
+
       // Hero lockup: drift + fade as it leaves
       const heroLockup = document.querySelector('[data-era-hero-lockup]');
       const heroSection = document.querySelector('[data-era-hero]');
@@ -47,11 +52,11 @@ export function useEraReveals() {
       gsap.utils.toArray<HTMLElement>('[data-era-scrub]').forEach((el) => {
         gsap.fromTo(
           el,
-          { yPercent: 16, opacity: 0.3, letterSpacing: '0.04em' },
+          light ? { yPercent: 16, opacity: 0.3 } : { yPercent: 16, opacity: 0.3, letterSpacing: '0.04em' },
           {
             yPercent: 0,
             opacity: 1,
-            letterSpacing: '-0.02em',
+            ...(light ? {} : { letterSpacing: '-0.02em' }),
             ease: 'none',
             immediateRender: false,
             scrollTrigger: {
@@ -97,6 +102,19 @@ export function useEraReveals() {
       // viewport. Words are wrapped in spans for the effect and the original
       // markup is restored on cleanup.
       gsap.utils.toArray<HTMLElement>('[data-era-ink]').forEach((el) => {
+        if (phone) {
+          // ~200 individually fading words is too much for a phone: fade the paragraph as one.
+          gsap.fromTo(
+            el,
+            { opacity: 0.2 },
+            {
+              opacity: 1,
+              ease: 'none',
+              scrollTrigger: { trigger: el, start: 'top 88%', end: 'top 55%', scrub: true },
+            }
+          );
+          return;
+        }
         const original = el.innerHTML;
         const words = (el.textContent ?? '').trim().split(/\s+/);
         el.innerHTML = words.map((w) => `<span data-ink-word>${w.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span>`).join(' ');
@@ -234,6 +252,7 @@ export function useEraReveals() {
       // Arched "docking" of the Certifications section: the big top radius
       // flattens to a straight edge as the section reaches the top
       gsap.utils.toArray<HTMLElement>('[data-era-arch]').forEach((el) => {
+        if (light) return; // fixed, smaller radius in CSS on phones
         gsap.fromTo(
           el,
           { borderTopLeftRadius: 150, borderTopRightRadius: 150 },
@@ -270,11 +289,11 @@ export function useEraReveals() {
       if (certCard && certSection) {
         gsap.fromTo(
           certCard,
-          { scale: 0.78, autoAlpha: 0.25, filter: 'blur(6px)' },
+          light ? { scale: 0.78, autoAlpha: 0.25 } : { scale: 0.78, autoAlpha: 0.25, filter: 'blur(6px)' },
           {
             scale: 1,
             autoAlpha: 1,
-            filter: 'blur(0px)',
+            ...(light ? {} : { filter: 'blur(0px)' }),
             ease: 'none',
             scrollTrigger: {
               trigger: certSection,
@@ -483,8 +502,9 @@ export function useEraReveals() {
       const lineEl = document.querySelector<HTMLElement>('.era-timeline-line-mobile');
       const timelineEl = document.querySelector<HTMLElement>('.era-timeline');
       if (!lineEl || !timelineEl) return;
-      gsap.set(lineEl, { scaleY: 0 });
       const nodes = gsap.utils.toArray<HTMLElement>('[data-era-node]');
+      gsap.set(lineEl, { scaleY: 0 });
+      gsap.set(nodes, { scale: 0, opacity: 0 });
 
       const waveTl = gsap.timeline({
         defaults: { ease: 'none', immediateRender: false },

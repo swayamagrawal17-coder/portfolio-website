@@ -305,7 +305,6 @@ a {
   width: 380px !important;
   height: 600px !important;
   z-index: 40 !important;
-  filter: brightness(1) !important;
 }
 .coverflow-expanded {
   max-height: 0;
@@ -943,3 +942,20 @@ a {
   }
 }
 
+/* ============================================================
+   Phone performance: no blend modes, blurs or big animated corner radii
+   ============================================================ */
+@media (pointer: coarse), (max-width: 640px) {
+  .era-rotating-mark {
+    mix-blend-mode: normal !important;
+  }
+}
+@media (pointer: coarse), (max-width: 900px) {
+  .builds-row {
+    filter: none;
+  }
+  [data-era-arch] {
+    border-top-left-radius: 56px !important;
+    border-top-right-radius: 56px !important;
+  }
+}

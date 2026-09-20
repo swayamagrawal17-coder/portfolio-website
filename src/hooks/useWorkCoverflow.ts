@@ -21,6 +21,8 @@ export function useWorkCoverflow() {
     if (!cards.length) return;
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Blurring five large cards is a heavy paint on phones; they fade and scale instead.
+    const lowPower = window.matchMedia('(pointer: coarse), (max-width: 900px)').matches;
 
     const CARD_COUNT = cards.length;
     let currentIndex = 0;
@@ -36,12 +38,12 @@ export function useWorkCoverflow() {
 
         const opacity = isActive ? 1 : 0.35;
         const scale = isActive ? 1 : 0.85;
-        const blur = isActive ? 0 : 3;
+        const blur = isActive || lowPower ? 0 : 3;
         const offset = distance * 260;
 
         card.style.transform = `translateX(${offset}px) scale(${scale})`;
         card.style.opacity = String(opacity);
-        card.style.filter = `blur(${blur}px)`;
+        card.style.filter = blur ? `blur(${blur}px)` : 'none';
         card.style.boxShadow = isActive ? '0 30px 80px rgba(0,0,0,.6)' : '0 20px 45px rgba(0,0,0,.35)';
         card.setAttribute('aria-hidden', isActive || isExpanded ? 'false' : 'true');
         card.tabIndex = isActive ? 0 : -1;

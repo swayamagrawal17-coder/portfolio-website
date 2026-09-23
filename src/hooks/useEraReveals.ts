@@ -69,9 +69,17 @@ export function useEraReveals() {
         );
       });
 
-      // Staggered content reveals
+      // Staggered content reveals. On phones the [data-era-ink] paragraphs
+      // (e.g. About) already fade themselves in via the scrub below, on the
+      // same element. Letting this one-shot tween drive their opacity too
+      // means two animations write the same property on the same frame, and
+      // whichever rendered last that tick wins, so a fast first scroll can
+      // land the text on a half-applied opacity that only looks right once
+      // the scrub regains control on a later pass. Skip those kids here.
       gsap.utils.toArray<HTMLElement>('[data-era-reveal]').forEach((group) => {
-        const kids = group.children.length ? Array.from(group.children) : [group];
+        const allKids = group.children.length ? Array.from(group.children) : [group];
+        const kids = phone ? allKids.filter((kid) => !kid.hasAttribute('data-era-ink')) : allKids;
+        if (!kids.length) return;
         gsap.from(kids, {
           y: 26,
           opacity: 0,

@@ -20,6 +20,7 @@ import { stats } from '@/lib/stats';
 import { experience } from '@/lib/experience';
 import { builds } from '@/lib/builds';
 import { CONTACT_EMAIL, LINKEDIN_URL } from '@/lib/site';
+import { LAST_UPDATED } from '@/lib/lastUpdated';
 
 const CHROME_SECTIONS: ChromeSection[] = [
   { id: 'hero', label: 'Intro', tone: 'light' },
@@ -1485,6 +1486,7 @@ export default function Home() {
             />
             <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>© {new Date().getFullYear()} Swayam Agrawal</span>
             <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>No cookies. Anonymous page-view analytics only.</span>
+            <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>Updated {LAST_UPDATED}</span>
             <span style={{ fontSize: 'var(--size-eyebrow)', color: 'var(--ink-soft)' }}>Pune, India</span>
           </div>
         </div>

@@ -839,10 +839,10 @@ a {
   100% { transform: translateY(46px); opacity: 0; }
 }
 .era-hero-cue {
-  animation: heroCueIn 900ms cubic-bezier(0.22, 1, 0.36, 1) 1400ms both;
+  animation: heroCueIn 900ms cubic-bezier(0.22, 1, 0.36, 1) 1700ms both;
 }
 .era-hero-cue-dot {
-  animation: heroCueDot 2s cubic-bezier(0.65, 0, 0.35, 1) 2300ms infinite;
+  animation: heroCueDot 2s cubic-bezier(0.65, 0, 0.35, 1) 2600ms infinite;
 }
 @media (prefers-reduced-motion: reduce) {
   .era-hero-cue {
@@ -857,6 +857,36 @@ a {
 @media (max-height: 520px) {
   .era-hero-cue {
     display: none;
+  }
+}
+
+/* ============================================================
+   Hero intro (useHeroIntro). Parts wait hidden for the script; if it
+   never runs, this failsafe shows them after 2.5s anyway.
+   ============================================================ */
+@keyframes heroFailsafe {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+[data-hero-part] {
+  animation: heroFailsafe 0.5s ease 2.5s both;
+}
+.hero-ch {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* room for the tops and tails of the serif caps inside the mask */
+  padding: 0.08em 0 0.12em;
+  margin: -0.08em 0 -0.12em;
+  text-align: center;
+}
+.hero-ch-in {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-hero-part] {
+    animation: none;
   }
 }
 

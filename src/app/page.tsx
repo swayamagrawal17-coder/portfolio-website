@@ -21,6 +21,7 @@ import { experience } from '@/lib/experience';
 import { builds } from '@/lib/builds';
 import { CONTACT_EMAIL, LINKEDIN_URL } from '@/lib/site';
 import { LAST_UPDATED } from '@/lib/lastUpdated';
+import { useHeroIntro } from '@/hooks/useHeroIntro';
 
 const CHROME_SECTIONS: ChromeSection[] = [
   { id: 'hero', label: 'Intro', tone: 'light' },
@@ -42,6 +43,7 @@ export default function Home() {
   useBuildsLedger();
   useHorizonDemo();
   useEraReveals();
+  useHeroIntro();
 
   const statsRef = useRef<HTMLDivElement>(null);
   useStatsCountUp(statsRef);
@@ -104,13 +106,16 @@ export default function Home() {
           >
             <h1
               id="hero-heading"
+              data-hero-part
+              aria-label="Swayam Agrawal"
               className="era-display"
               style={{ fontSize: 'clamp(58px, 15vw, 190px)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
             >
-              <span>Swayam</span>
+              <span data-hero-word>Swayam</span>
               <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-                Agrawal
+                <span data-hero-word>Agrawal</span>
                 <span
+                  data-hero-script
                   className="era-script"
                   aria-hidden="true"
                   style={{
@@ -127,6 +132,8 @@ export default function Home() {
             </h1>
 
             <p
+              data-hero-part
+              data-hero-tagline
               style={{
                 margin: '34px 0 0',
                 fontFamily: 'var(--font-ui)',
@@ -142,6 +149,8 @@ export default function Home() {
           </div>
 
           <div
+            data-hero-part
+            data-hero-actions
             style={{
               position: 'relative',
               marginTop: '56px',

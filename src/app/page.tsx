@@ -406,6 +406,7 @@ export default function Home() {
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', maxWidth: 'var(--content-max)' }}>
                 <h2
                   id="work-heading"
+                  data-era-letters
                   className="era-display"
                   style={{ margin: 0, fontSize: 'clamp(40px, 8vw, 120px)', maxWidth: '11ch', color: 'var(--paper)' }}
                 >

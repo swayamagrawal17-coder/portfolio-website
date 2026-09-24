@@ -1002,3 +1002,9 @@ a {
     border-top-right-radius: 56px !important;
   }
 }
+
+/* Letter-rise headings (data-era-letters): keep each word's letters together so lines still wrap by word */
+.era-word {
+  display: inline-block;
+  white-space: nowrap;
+}

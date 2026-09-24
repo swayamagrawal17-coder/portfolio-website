@@ -78,7 +78,13 @@ export function useEraReveals() {
       // the scrub regains control on a later pass. Skip those kids here.
       gsap.utils.toArray<HTMLElement>('[data-era-reveal]').forEach((group) => {
         const allKids = group.children.length ? Array.from(group.children) : [group];
-        const kids = phone ? allKids.filter((kid) => !kid.hasAttribute('data-era-ink')) : allKids;
+        // Letter-rise headings (below) bring themselves in; sliding their block too would double the motion.
+        const kids = allKids.filter(
+          (kid) =>
+            !(phone && kid.hasAttribute('data-era-ink')) &&
+            !kid.matches('[data-era-letters]') &&
+            !kid.querySelector('[data-era-letters]')
+        );
         if (!kids.length) return;
         gsap.from(kids, {
           y: 26,
@@ -89,6 +95,55 @@ export function useEraReveals() {
           immediateRender: false,
           scrollTrigger: { trigger: group, start: 'top 85%' },
         });
+      });
+
+      // Letter rise for a couple of key headings, echoing the hero intro: each
+      // letter comes up out of a mask once the heading scrolls into view, and
+      // a following [data-era-letters-script] line writes itself in.
+      gsap.utils.toArray<HTMLElement>('[data-era-letters]').forEach((el) => {
+        const original = el.innerHTML;
+        const hadLabel = el.hasAttribute('aria-label');
+        if (!hadLabel) el.setAttribute('aria-label', (el.textContent ?? '').replace(/\s+/g, ' ').trim());
+        undoSplits.push(() => {
+          el.innerHTML = original;
+          if (!hadLabel) el.removeAttribute('aria-label');
+        });
+
+        Array.from(el.childNodes).forEach((node) => {
+          if (node.nodeType !== Node.TEXT_NODE) return;
+          const frag = document.createDocumentFragment();
+          (node.textContent ?? '').split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) {
+              frag.appendChild(document.createTextNode(' '));
+              return;
+            }
+            const word = document.createElement('span');
+            word.className = 'era-word';
+            for (const ch of part) {
+              const mask = document.createElement('span');
+              mask.className = 'hero-ch';
+              const inner = document.createElement('span');
+              inner.className = 'hero-ch-in';
+              inner.textContent = ch;
+              mask.appendChild(inner);
+              word.appendChild(mask);
+            }
+            frag.appendChild(word);
+          });
+          node.replaceWith(frag);
+        });
+
+        const script = el.nextElementSibling?.matches('[data-era-letters-script]')
+          ? (el.nextElementSibling as HTMLElement)
+          : null;
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: el, start: 'top 82%', toggleActions: 'play none none none' },
+        });
+        tl.from(el.querySelectorAll('.hero-ch-in'), { yPercent: 115, duration: 1, ease: 'expo.out', stagger: 0.03 });
+        if (script) {
+          tl.from(script, { clipPath: 'inset(-30% 105% -50% -10%)', duration: 0.9, ease: 'power2.inOut' }, 0.55);
+        }
       });
 
       // Scroll-progress hairline across the top of the viewport

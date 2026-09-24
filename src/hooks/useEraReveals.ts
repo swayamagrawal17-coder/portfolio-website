@@ -307,6 +307,24 @@ export function useEraReveals() {
         );
         // the curved label drifts further up and fades as the navy rises
         if (archLabel) archTl.to(archLabel, { yPercent: -120, opacity: 0 }, 0.02);
+
+        // Before that, while the stage scrolls into view, the label starts as a
+        // straight line and bends into its arch: only the curve's middle control
+        // point moves, so the text re-flows along it. The markup keeps the bent
+        // path, so without this (or with reduced motion) it simply sits curved.
+        const arc = archLabel?.querySelector<SVGPathElement>('#work-arc');
+        if (arc) {
+          gsap.fromTo(
+            arc,
+            { attr: { d: 'M 40,232 Q 600,232 1160,232' } },
+            {
+              attr: { d: 'M 40,232 Q 600,26 1160,232' },
+              ease: 'power1.inOut',
+              // starts once the label (10% down the stage) is on screen
+              scrollTrigger: { trigger: archRunway, start: 'top 62%', end: 'top top', scrub: true },
+            }
+          );
+        }
         // the heading isn't animated — it sits centred and the rising navy panel
         // uncovers it, so by the time the blue has filled the frame it's fully there
         if (archInner) archTl.from(archInner, { y: 26 }, 0.12);

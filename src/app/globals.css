@@ -582,6 +582,8 @@ a {
   }
   [data-era-arch-reveal] {
     height: auto !important;
+    margin-top: 0 !important;
+    pointer-events: auto !important;
   }
   [data-era-arch-stage] {
     position: static !important;
@@ -1007,4 +1009,17 @@ a {
 .era-word {
   display: inline-block;
   white-space: nowrap;
+}
+
+/* Work arch intro: the stage's top half is empty cream, so the whole runway
+   slides up over the end of About (transparent, click-through). The label then
+   follows right after the About caption and the navy dome rises over it.
+   #work is flow-root so this margin doesn't drag the section box (and the
+   corner nav's section tracking) up with it. */
+[data-era-arch-reveal] {
+  /* -45vh cancels the stage's empty top; +320px then leaves 200px between the
+     About caption and the label (the label sits 221px above the dome, set on
+     the SVG in page.tsx, which gives a 220px gap under the text). */
+  margin-top: calc(-45vh + 320px);
+  pointer-events: none;
 }

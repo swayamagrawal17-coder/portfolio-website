@@ -301,7 +301,7 @@ export function useEraReveals() {
         });
         archTl.fromTo(
           archPanel,
-          { clipPath: 'ellipse(88% 15% at 50% 100%)' },
+          { clipPath: 'ellipse(88% 45% at 50% 100%)' },
           { clipPath: 'ellipse(150% 175% at 50% 100%)' },
           0,
         );
@@ -320,8 +320,15 @@ export function useEraReveals() {
             {
               attr: { d: 'M 40,232 Q 600,26 1160,232' },
               ease: 'power1.inOut',
-              // starts once the label (10% down the stage) is on screen
-              scrollTrigger: { trigger: archRunway, start: 'top 62%', end: 'top top', scrub: true },
+              // starts once the label (221px above the dome, which sits 55% down
+              // the stage) has come up onto the screen
+              scrollTrigger: {
+                trigger: archRunway,
+                start: () => `top ${Math.round(window.innerHeight * 0.45 + 160)}px`,
+                end: 'top top',
+                scrub: true,
+                invalidateOnRefresh: true,
+              },
             }
           );
         }

@@ -287,7 +287,7 @@ export default function Home() {
         <section
           id="about"
           aria-labelledby="about-heading"
-          style={{ position: 'relative', padding: `clamp(90px, 12vw, 150px) ${BAND_X}`, background: 'var(--paper)' }}
+          style={{ position: 'relative', padding: `clamp(90px, 12vw, 150px) ${BAND_X} clamp(36px, 4.5vw, 60px)`, background: 'var(--paper)' }}
         >
           <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
             <span className="era-eyebrow">About</span>
@@ -365,14 +365,14 @@ export default function Home() {
         </section>
 
         {/* ---------- Work: ERA arch reveal, then the coverflow ---------- */}
-        <section id="work" aria-labelledby="work-heading" style={{ position: 'relative', background: 'var(--paper)' }}>
+        <section id="work" aria-labelledby="work-heading" style={{ position: 'relative', display: 'flow-root', background: 'var(--paper)' }}>
           {/* Arch reveal: a navy dome sweeps up from the foot of the screen and fills it.
               A tall runway + a position:sticky stage does the "pinning" (no ScrollTrigger
               pin), and GSAP only scrubs the dome/title transforms. */}
-          <div data-era-arch-reveal style={{ position: 'relative', height: '140vh', background: 'var(--paper)' }}>
+          <div data-era-arch-reveal style={{ position: 'relative', height: '140vh' }}>
             <div
               data-era-arch-stage
-              style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', background: 'var(--paper)' }}
+              style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}
             >
             {/* navy panel, revealed through a growing bottom-anchored ellipse so it
                 reads as a dome rising out of the cream. GSAP scrubs the clip-path. */}
@@ -383,7 +383,7 @@ export default function Home() {
                 position: 'absolute',
                 inset: 0,
                 background: 'var(--ink)',
-                clipPath: 'ellipse(88% 15% at 50% 100%)',
+                clipPath: 'ellipse(88% 45% at 50% 100%)',
               }}
             />
 
@@ -423,7 +423,7 @@ export default function Home() {
               aria-hidden="true"
               viewBox="0 0 1200 240"
               preserveAspectRatio="xMidYMid meet"
-              style={{ position: 'absolute', left: '50%', top: '10%', width: 'min(1180px, 132vw)', transform: 'translateX(-50%)', pointerEvents: 'none', overflow: 'visible', zIndex: 3 }}
+              style={{ position: 'absolute', left: '50%', bottom: 'calc(45% + 221px)', width: 'min(1180px, 132vw)', transform: 'translateX(-50%)', pointerEvents: 'none', overflow: 'visible', zIndex: 3 }}
             >
               <defs>
                 <path id="work-arc" d="M 40,232 Q 600,26 1160,232" fill="none" />

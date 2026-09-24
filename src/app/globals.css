@@ -301,6 +301,12 @@ a {
 /* ============================================================
    Work coverflow (kept as-is structurally)
    ============================================================ */
+/* Opening a card really changes its size (the write-up needs the room), so
+   width/height still animate; containment keeps each frame's re-layout
+   inside the card instead of reaching the rest of the page. */
+.coverflow-card {
+  contain: layout paint;
+}
 .coverflow-card.is-expanded {
   width: 380px !important;
   height: 600px !important;

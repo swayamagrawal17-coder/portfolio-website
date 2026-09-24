@@ -1147,7 +1147,17 @@ export default function Home() {
                 className="era-cert-progressbar"
                 style={{ position: 'absolute', bottom: 'clamp(24px, 5vh, 56px)', left: BAND_X, right: BAND_X, height: '2px', background: 'rgba(242, 239, 230, 0.16)' }}
               >
-                <div id="cert-progress-bar" style={{ height: '100%', width: '20%', background: 'var(--bougainvillea)', transition: 'width 600ms cubic-bezier(.25,1,.5,1)' }} />
+                <div
+                  id="cert-progress-bar"
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                    background: 'var(--bougainvillea)',
+                    transformOrigin: 'left center',
+                    transform: 'scaleX(0.2)',
+                    transition: 'transform 600ms cubic-bezier(.25,1,.5,1)',
+                  }}
+                />
               </div>
               <div
                 id="cert-gallery-card"

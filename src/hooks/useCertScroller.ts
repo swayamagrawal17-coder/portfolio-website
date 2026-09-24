@@ -49,7 +49,7 @@ export function useCertScroller() {
       const num = document.getElementById('cert-progress-num');
       if (num) num.textContent = String(index + 1).padStart(2, '0');
       const bar = document.getElementById('cert-progress-bar');
-      if (bar) bar.style.width = `${((index + 1) / items.length) * 100}%`;
+      if (bar) bar.style.transform = `scaleX(${(index + 1) / items.length})`;
     };
 
     const onScroll = () => {

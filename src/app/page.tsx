@@ -691,7 +691,7 @@ export default function Home() {
             .filter((b) => b.status === 'live' && b.entries?.length)
             .slice(0, 1)
             .map((build) => (
-              <div key={build.id} id="builds-ledger" style={{ position: 'relative', height: '220vh', marginTop: 'clamp(40px, 6vw, 72px)' }}>
+              <div key={build.id} id="builds-ledger" style={{ position: 'relative', height: '160vh', marginTop: 'clamp(40px, 6vw, 72px)' }}>
                 <div
                   id="builds-ledger-pin"
                   style={{
@@ -829,7 +829,7 @@ export default function Home() {
             .map((build) => {
               const demo = build.demo!;
               return (
-                <div key={build.id} id="horizon-demo" style={{ position: 'relative', height: '200vh', marginTop: 'clamp(56px, 8vw, 96px)' }}>
+                <div key={build.id} id="horizon-demo" style={{ position: 'relative', height: '150vh', marginTop: 'clamp(56px, 8vw, 96px)' }}>
                   <div
                     id="horizon-demo-pin"
                     style={{
@@ -1128,7 +1128,7 @@ export default function Home() {
           <h2 id="certifications-heading" style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}>
             Certifications
           </h2>
-          <div id="cert-scroller" style={{ position: 'relative', height: '360vh' }}>
+          <div id="cert-scroller" style={{ position: 'relative', height: '240vh' }}>
             <div id="cert-scroller-pin" style={{ position: 'sticky', top: 0, width: '100%', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: `clamp(28px, 5vw, 64px)`, boxSizing: 'border-box' }}>
               <div
                 aria-hidden="true"

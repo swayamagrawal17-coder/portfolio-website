@@ -1375,7 +1375,7 @@ export default function Home() {
                   } catch {
                     // Clipboard API unavailable (e.g. insecure context) — the
                     // mailto button above still works on its own.
-                    if (status) status.textContent = 'Could not copy automatically — use the email button instead.';
+                    if (status) status.textContent = 'Could not copy automatically, so use the email button instead.';
                   }
                 }}
                 style={{
